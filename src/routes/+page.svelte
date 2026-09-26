@@ -1,2 +1,18 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+	import { auth } from '$lib/firebase';
+	import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+	import { goto } from '$app/navigation';
+
+	async function signIn() {
+		const provider = new GoogleAuthProvider();
+
+		try {
+			await signInWithPopup(auth, provider);
+			await goto('/home');
+		} catch (error) {
+			console.error(error);
+		}
+	}
+</script>
+
+<button onclick={signIn}> Sign in with Google </button>
