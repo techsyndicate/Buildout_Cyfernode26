@@ -1,8 +1,19 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { auth } from '$lib/firebase';
-	import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+	import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import ColorBends from '$lib/components/svelte-bits/ColorBends.svelte';
+
+	onMount(() => {
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			if (user) {
+				goto('/home');
+			}
+		});
+
+		return unsubscribe;
+	});
 
 	async function signIn() {
 		const provider = new GoogleAuthProvider();
@@ -38,11 +49,10 @@
 	</div>
 
 	<header class="relative z-10 flex w-full items-center justify-between">
-		<span class="-mt-3 text-xl font-semibold text-white">shareSpace</span>
+		<span class="-mt-3 text-xl font-semibold text-white">tenantApp</span>
 
 		<nav class="-mt-3 flex gap-8 font-medium">
-			<a href="#offices" class="text-white hover:underline">See Offices</a>
-			<a href="#rent" class="text-white hover:underline">Rent Out</a>
+			<a href="#rent" class="text-white hover:underline">About Us</a>
 			<a href="#contact" class="text-white hover:underline">Contact</a>
 		</nav>
 	</header>
@@ -51,8 +61,8 @@
 		class="relative z-10 flex flex-col items-center justify-center gap-10 self-center text-center"
 	>
 		<div>
-			<h1 class="text-5xl font-bold text-white">shareSpace</h1>
-			<p class="mt-2 text-3xl text-white">Collaborative Spaces, Made Easy.</p>
+			<h1 class="text-5xl font-bold text-white">tenantApp</h1>
+			<p class="mt-2 text-3xl text-white">Rent out, check details, and more..</p>
 		</div>
 
 		<div class="flex flex-col items-center gap-3">
