@@ -183,6 +183,8 @@
 	</div>
 
 	<footer id="contact" class="border-t border-zinc-200 py-6 text-center text-xs text-zinc-500">
-		© 2026 tenantApp. All rights reserved.
+		Made with ❤️ by <a class="text-[#16e16e] hover:underline" href="https://techsyndicate.us/"
+			>Tech Syndicate</a
+		>
 	</footer>
 </div>
