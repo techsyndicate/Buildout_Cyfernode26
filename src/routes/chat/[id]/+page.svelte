@@ -21,11 +21,46 @@
 	let allowed = $state(false);
 	let loading = $state(true);
 
-	const chatId = page.params.id;
+	let chatId = $derived(page.params.id);
+
+	async function loadChat(currentChatId: string) {
+		if (!currentChatId || !auth.currentUser) return;
+		loading = true;
+
+		const chat = await getDoc(doc(db, 'chatrooms', currentChatId));
+
+		if (!chat.exists() || !chat.data().members?.includes(auth.currentUser.uid)) {
+			goto('/chat');
+			return;
+		}
+
+		allowed = true;
+		loading = false;
+
+		const messagesQuery = query(
+			collection(db, 'chatrooms', currentChatId, 'messages'),
+			orderBy('timestamp', 'asc')
+		);
+
+		return onSnapshot(messagesQuery, (snapshot) => {
+			messages = snapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data()
+			}));
+		});
+	}
+
+	$effect(() => {
+		if (chatId && userId) {
+			const unsubscribe = loadChat(chatId);
+			return () => {
+				unsubscribe.then((unsub) => unsub?.());
+			};
+		}
+	});
 
 	async function sendMessage() {
-		if (!text.trim()) return;
-		if (!userId) return;
+		if (!text.trim() || !userId || !chatId) return;
 
 		await addDoc(collection(db, 'chatrooms', chatId, 'messages'), {
 			sender: userId,
@@ -37,64 +72,37 @@
 	}
 
 	onMount(() => {
-		const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+		return onAuthStateChanged(auth, (user) => {
 			if (!user) {
 				goto('/');
 				return;
 			}
 
 			userId = user.uid;
-
-			const chat = await getDoc(doc(db, 'chatrooms', chatId));
-
-			if (!chat.exists()) {
-				goto('/chat');
-				return;
+			if (chatId) {
+				loadChat(chatId);
 			}
-
-			const data = chat.data();
-
-			if (!data.members.includes(user.uid)) {
-				goto('/chat');
-				return;
-			}
-
-			allowed = true;
-			loading = false;
-
-			const messagesQuery = query(
-				collection(db, 'chatrooms', chatId, 'messages'),
-				orderBy('timestamp', 'asc')
-			);
-
-			const unsubscribeMessages = onSnapshot(messagesQuery, (snapshot) => {
-				messages = snapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data()
-				}));
-			});
-
-			return unsubscribeMessages;
 		});
-
-		return unsubscribeAuth;
 	});
 </script>
 
 {#if loading}
-	<div class="flex h-screen items-center justify-center">
-		<p>Loading...</p>
+	<div class="flex h-screen items-center justify-center bg-white text-zinc-900">
+		<p class="text-sm text-zinc-400">Loading chat...</p>
 	</div>
 {:else if allowed}
-	<div class="flex h-screen flex-col">
-		<header class="flex items-center gap-4 border-b p-5">
-			<button onclick={() => goto('/chat')} class="rounded-xl border px-3 py-2 hover:bg-zinc-100">
+	<div class="flex h-screen flex-col bg-white text-zinc-900">
+		<header class="flex items-center gap-4 border-b border-zinc-200 p-5">
+			<button
+				onclick={() => goto('/chat')}
+				class="rounded-lg border border-zinc-200 px-3 py-2 text-sm hover:bg-zinc-50"
+			>
 				←
 			</button>
 
 			<div>
 				<h1 class="font-bold">Chat</h1>
-				<p class="text-sm text-zinc-500">ID: {chatId}</p>
+				<p class="text-xs text-zinc-400">ID: {chatId}</p>
 			</div>
 		</header>
 
@@ -107,8 +115,10 @@
 				{#each messages as message}
 					<div class={`flex ${message.sender === userId ? 'justify-end' : 'justify-start'}`}>
 						<div
-							class={`max-w-[70%] rounded-2xl px-4 py-3 ${
-								message.sender === userId ? 'bg-black text-white' : 'border bg-white'
+							class={`max-w-[70%] rounded-2xl px-4 py-3 text-sm ${
+								message.sender === userId
+									? 'bg-zinc-900 text-white'
+									: 'border border-zinc-200 bg-white text-zinc-900'
 							}`}
 						>
 							<p>{message.text}</p>
@@ -123,18 +133,18 @@
 				event.preventDefault();
 				sendMessage();
 			}}
-			class="border-t bg-white p-4"
+			class="border-t border-zinc-200 bg-white p-4"
 		>
 			<div class="mx-auto flex max-w-3xl gap-3">
 				<input
 					bind:value={text}
 					placeholder="Type a message..."
-					class="min-w-0 flex-1 rounded-xl border px-4 py-3 outline-none focus:border-black"
+					class="min-w-0 flex-1 rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900"
 				/>
 
 				<button
 					type="submit"
-					class="rounded-xl bg-black px-5 py-3 font-medium text-white hover:bg-zinc-800"
+					class="rounded-lg bg-zinc-900 px-5 py-3 text-sm font-medium text-white hover:bg-zinc-800"
 				>
 					Send
 				</button>

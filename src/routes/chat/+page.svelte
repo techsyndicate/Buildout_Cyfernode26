@@ -15,7 +15,6 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 
 	let name = $state('');
@@ -131,7 +130,7 @@
 			sidebarOpen ? 'w-55' : 'w-0'
 		}`}
 	>
-		<Sidebar currentPath={page.url.pathname} title="Buildout" subtitle="Navigation" {links} />
+		<Sidebar currentPath="/chat" title="Buildout" subtitle="Navigation" {links} />
 	</div>
 
 	<main class="min-w-0 flex-1 overflow-y-auto p-8">
