@@ -125,15 +125,13 @@
 
 <div class="flex h-screen w-full overflow-hidden bg-white text-black">
 	<div
-		class={`shrink-0 overflow-hidden transition-all duration-300 ${
-			sidebarOpen ? 'w-55' : 'w-0'
-		}`}
+		class={`shrink-0 overflow-hidden transition-all duration-300 ${sidebarOpen ? 'w-55' : 'w-0'}`}
 	>
 		<div
 			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)]"
 		>
 			<div class="px-3 py-3">
-				<span class="text-sm font-bold tracking-tight text-zinc-900">Buildout</span>
+				<span class="text-sm font-bold tracking-tight text-black">Buildout</span>
 			</div>
 
 			<nav class="mt-3 flex flex-1 flex-col gap-1">
@@ -163,9 +161,7 @@
 				<div
 					class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-[0_6px_20px_rgba(0,0,0,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
 				>
-					<p class="text-sm font-medium text-zinc-500">New chat</p>
-
-					<h2 class="mt-1 text-2xl font-bold">Create a chat</h2>
+					<h2 class="mt-1 text-2xl font-bold">Create a new chat</h2>
 
 					<button
 						onclick={createChat}
@@ -192,8 +188,6 @@
 				<div
 					class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-[0_6px_20px_rgba(0,0,0,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
 				>
-					<p class="text-sm font-medium text-zinc-500">Join</p>
-
 					<h2 class="mt-1 text-2xl font-bold">Join a chat</h2>
 
 					<input
