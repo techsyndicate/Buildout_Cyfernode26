@@ -16,6 +16,12 @@
 		currentPath?: string;
 		onLogout?: () => void;
 	} = $props();
+
+	async function logout() {
+		await signOut(auth);
+		goto("/");
+	}
+
 </script>
 
 <div
@@ -45,5 +51,16 @@
 		{/each}
 
 		<hr class="border-white/20" />
+
+				<hr class="border" />
+
+				<button
+					type="button"
+					onclick={logout}
+					class="w-full rounded-lg bg-red-600 px-3 py-2.5 text-left text-sm font-medium text-white transition hover:bg-red-700"
+				>
+					Log Out
+				</button>
+
 	</nav>
 </div>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { auth, db } from '$lib/firebase';
-	import { onAuthStateChanged } from 'firebase/auth';
+	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import {
 		collection,
 		addDoc,
@@ -134,6 +134,12 @@
 			}
 		});
 	});
+
+	async function logout() {
+		await signOut(auth);
+		goto("/");
+	}
+
 </script>
 
 <div class="flex h-screen bg-white text-zinc-900">

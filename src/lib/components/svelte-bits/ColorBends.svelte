@@ -114,6 +114,12 @@ void main() {
 				: [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
 		return new THREE.Vector3(v[0] / 255, v[1] / 255, v[2] / 255);
 	}
+
+	async function logout() {
+		await signOut(auth);
+		goto("/");
+	}
+
 </script>
 
 <script lang="ts">
@@ -307,6 +313,12 @@ void main() {
 		currentContainer.addEventListener('pointermove', handlePointerMove);
 		return () => currentContainer.removeEventListener('pointermove', handlePointerMove);
 	});
+
+	async function logout() {
+		await signOut(auth);
+		goto("/");
+	}
+
 </script>
 
 <div bind:this={container} class="relative h-full w-full overflow-hidden {className}"></div>

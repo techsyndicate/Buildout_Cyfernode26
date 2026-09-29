@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { auth, db } from '$lib/firebase';
-	import { onAuthStateChanged } from 'firebase/auth';
+	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import {
 		collection,
 		addDoc,
@@ -135,6 +135,11 @@
 
 		return unsubscribe;
 	});
+
+	async function logout() {
+		await signOut(auth);
+		goto('/');
+	}
 </script>
 
 <div class="flex h-screen w-full overflow-hidden bg-white text-black">
@@ -164,6 +169,16 @@
 						{link.label}
 					</button>
 				{/each}
+
+				<hr class="border" />
+
+				<button
+					type="button"
+					onclick={logout}
+					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black hover:bg-red-500 hover:text-white"
+				>
+					Log Out
+				</button>
 			</nav>
 		</div>
 	</div>

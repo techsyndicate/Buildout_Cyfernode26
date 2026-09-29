@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { auth } from '$lib/firebase';
-	import { onAuthStateChanged } from 'firebase/auth';
+	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 
 	let name = $state('');
@@ -37,6 +37,11 @@
 			name = user.displayName ?? 'User';
 		});
 	});
+
+	async function logout() {
+		await signOut(auth);
+		goto('/');
+	}
 </script>
 
 <div
@@ -67,6 +72,16 @@
 						{link.label}
 					</button>
 				{/each}
+
+				<hr class="border" />
+
+				<button
+					type="button"
+					onclick={logout}
+					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black hover:bg-red-500 hover:text-white"
+				>
+					Log Out
+				</button>
 			</nav>
 		</div>
 	</div>

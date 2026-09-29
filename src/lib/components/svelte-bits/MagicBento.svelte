@@ -18,6 +18,12 @@
 		clickEffect?: boolean;
 		enableMagnetism?: boolean;
 	}
+
+	async function logout() {
+		await signOut(auth);
+		goto("/");
+	}
+
 </script>
 
 <script lang="ts">
@@ -258,6 +264,12 @@
 
 	const cardStyle = (color: string | undefined) =>
 		`background-color:${color || 'var(--background-dark)'};`;
+
+	async function logout() {
+		await signOut(auth);
+		goto("/");
+	}
+
 </script>
 
 <div

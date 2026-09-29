@@ -105,8 +105,8 @@
 		}
 		return onAuthStateChanged(auth, (user) => {
 			if (!user) goto('/');
-			else if (tenant) {
-				goto('/tenant/landlords');
+			else if (!tenant) {
+				goto('/tenants');
 				return;
 			} else loadSpaces(user.uid);
 		});
@@ -145,7 +145,6 @@
 						{link.label}
 					</button>
 				{/each}
-
 				<hr class="border" />
 
 				<button
@@ -163,8 +162,8 @@
 		<div class="mx-auto max-w-4xl">
 			<div>
 				<h1 class="text-3xl">
-					<span class="font-light italic">Manage</span> your
-					<span class="font-semibold">tenants</span>
+					<span class="font-light italic">Talk</span> with your
+					<span class="font-semibold">landlords</span>
 				</h1>
 				<p class="text-sm text-zinc-500">Manage your properties and connect with tenants.</p>
 			</div>
@@ -173,29 +172,30 @@
 				<div
 					class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_6px_20px_rgba(0,0,0,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
 				>
-					<h2 class="mt-2 text-base font-semibold">Create a property space</h2>
+					<h2 class="mt-2 text-base font-semibold">Join a space</h2>
 
 					<p class="mt-1 text-sm text-zinc-500">
-						Generate an invite code to share with your tenant.
+						Enter the 6-digit code provided by your landlord.
 					</p>
 
-					<button
-						onclick={createSpace}
-						disabled={creating}
-						class="mt-6 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-50"
-					>
-						{creating ? 'Creating...' : 'Create Space'}
-					</button>
+					<input
+						bind:value={joinCode}
+						maxlength="6"
+						inputmode="numeric"
+						placeholder="123456"
+						class="mt-6 w-full rounded-lg border border-zinc-200 px-4 py-2.5 text-sm transition outline-none focus:border-zinc-900"
+					/>
 
-					{#if newCode}
-						<div class="mt-6 rounded-xl bg-zinc-50 p-4 text-center shadow-inner">
-							<span class="text-xs text-zinc-400">Your Invite Code</span>
-
-							<p class="mt-1 text-2xl font-bold tracking-widest text-zinc-900">
-								{newCode}
-							</p>
-						</div>
+					{#if error}
+						<p class="mt-2 text-xs text-red-500">{error}</p>
 					{/if}
+
+					<button
+						onclick={joinSpace}
+						class="mt-4 rounded-lg border border-zinc-200 px-4 py-2.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+					>
+						Join Space
+					</button>
 				</div>
 			</div>
 
