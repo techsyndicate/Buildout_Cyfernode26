@@ -27,7 +27,6 @@
 	let replies = $state<Record<string, any[]>>({});
 	let replyText = $state<Record<string, string>>({});
 
-	// Rules state
 	let rulesText = $state('');
 	let savingRules = $state(false);
 
@@ -137,9 +136,8 @@
 
 	async function logout() {
 		await signOut(auth);
-		goto("/");
+		goto('/');
 	}
-
 </script>
 
 <div class="flex h-screen bg-white text-zinc-900">

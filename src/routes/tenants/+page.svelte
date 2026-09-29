@@ -113,6 +113,7 @@
 	});
 
 	async function logout() {
+		document.cookie = 'tenant=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 		await signOut(auth);
 		goto('/');
 	}

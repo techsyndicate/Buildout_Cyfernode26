@@ -11,7 +11,6 @@
 		const cookies = document.cookie.split('; ');
 		const tenantCookie = cookies.find((row) => row.startsWith('tenant='));
 		const isTenant = tenantCookie?.split('=')[1] === 'true';
-		tenant = isTenant;
 		links = isTenant
 			? [
 					{ label: 'Home', href: '/tenant/home' },
@@ -36,6 +35,7 @@
 		});
 	});
 	async function logout() {
+		document.cookie = 'tenant=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 		await signOut(auth);
 		goto('/');
 	}
