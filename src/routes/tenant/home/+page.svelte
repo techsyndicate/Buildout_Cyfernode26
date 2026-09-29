@@ -8,11 +8,11 @@
 	let sidebarOpen = $state(true);
 
 	const links = [
-		{ label: 'Home', href: '/home' },
-		{ label: 'Chat', href: '/chat' },
+		{ label: 'Home', href: '/tenant/home' },
+		{ label: 'Chat', href: '/tenant/chat' },
 		{ label: 'shareSpace', href: '/sharespace' },
-		{ label: 'Tenants', href: '/tenants' },
-		{ label: 'Houses', href: '/houses' }
+		{ label: 'Landlords', href: '/tenant/landlords' },
+		{ label: 'Houses', href: '/tenant/houses' }
 	];
 
 	let tenant = $state(false);
@@ -30,8 +30,8 @@
 			if (!user) {
 				goto('/');
 				return;
-			} else if (tenant) {
-				goto('/tenant/home');
+			} else if (!tenant) {
+				goto('/home');
 				return;
 			}
 			name = user.displayName ?? 'User';
@@ -61,7 +61,7 @@
 						type="button"
 						onclick={() => goto(link.href)}
 						class={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-							link.href === '/home'
+							link.href === '/tenant/home'
 								? 'bg-blue-600 text-white shadow-sm'
 								: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
 						}`}
@@ -78,8 +78,8 @@
 			<div
 				class="rounded-2xl border border-white/60 bg-white/85 p-7 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm"
 			>
-				<h1 class="text-3xl tracking-tight text-zinc-950">
-					<span class="font-light italic">Welcome,</span> <span class="font-semibold">{name}!</span>
+				<h1 class="text-3xl font-bold tracking-tight text-zinc-950">
+					Welcome, {name}!
 				</h1>
 
 				<p class="mt-1 text-zinc-500">What would you like to do?</p>
@@ -93,15 +93,15 @@
 						class="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.10)] lg:col-span-2 lg:row-span-2"
 					>
 						<div>
-							<h2 class="text-3xl font-bold tracking-tight text-zinc-950">Check your tenants</h2>
-							<p class="mt-3 max-w-md text-zinc-600">View and manage your tenants.</p>
+							<h2 class="text-3xl font-bold tracking-tight text-zinc-950">Check your landlords</h2>
+							<p class="mt-3 max-w-md text-zinc-600">View and manage your landlords.</p>
 						</div>
 
 						<a
 							href="/tenants"
 							class="w-fit rounded-xl bg-black px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800 hover:shadow-md"
 						>
-							Manage Tenants →
+							Manage Landlords →
 						</a>
 					</div>
 

@@ -26,11 +26,11 @@
 	let loading = $state(true);
 
 	const links = [
-		{ label: 'Home', href: '/home' },
-		{ label: 'Chat', href: '/chat' },
+		{ label: 'Home', href: '/tenant/home' },
+		{ label: 'Chat', href: '/tenant/chat' },
 		{ label: 'shareSpace', href: '/sharespace' },
-		{ label: 'Tenants', href: '/tenants' },
-		{ label: 'Houses', href: '/houses' }
+		{ label: 'Landlords', href: '/tenant/landlords' },
+		{ label: 'Houses', href: '/tenant/houses' }
 	];
 
 	async function loadChats(uid: string) {
@@ -123,8 +123,8 @@
 			if (!user) {
 				goto('/');
 				return;
-			} else if (tenant) {
-				goto('/tenant/chat');
+			} else if (!tenant) {
+				goto('/chat');
 				return;
 			}
 
@@ -156,7 +156,7 @@
 						type="button"
 						onclick={() => goto(link.href)}
 						class={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-							link.href === '/chat'
+							link.href === '/tenant/chat'
 								? 'bg-blue-600 text-white shadow-sm'
 								: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
 						}`}
@@ -170,39 +170,32 @@
 
 	<main class="min-w-0 flex-1 overflow-y-auto p-8">
 		<div class="mx-auto max-w-4xl">
-			<h1 class="text-3xl">
-				<span class="font-light italic">Chat</span> <span>with your</span>
-				<span class="font-semibold">tenants</span>
-			</h1>
+			<h1 class="text-3xl font-bold">Chat</h1>
 			<p class="mt-2 text-zinc-600">Create a chat or join one using a code.</p>
 
-			<div class="mt-8">
-				<div
-					class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-[0_6px_20px_rgba(0,0,0,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
+			<div
+				class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-[0_6px_20px_rgba(0,0,0,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
+			>
+				<h2 class="mt-1 text-2xl font-bold">Join a chat</h2>
+
+				<input
+					bind:value={joinCode}
+					maxlength="6"
+					inputmode="numeric"
+					placeholder="123456"
+					class="mt-6 w-full rounded-xl border px-4 py-3 outline-none focus:border-black"
+				/>
+
+				<button
+					onclick={joinChat}
+					class="mt-3 rounded-xl border border-black px-5 py-3 text-sm font-medium transition hover:bg-black hover:text-white"
 				>
-					<h2 class="mt-1 text-2xl font-bold">Create a new chat</h2>
+					Join Chat
+				</button>
 
-					<button
-						onclick={createChat}
-						class="mt-6 rounded-xl bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
-					>
-						Create Chat
-					</button>
-
-					{#if newCode}
-						<div class="mt-5 rounded-2xl bg-zinc-100 p-4 shadow-inner">
-							<p class="text-sm text-zinc-500">Your chat code</p>
-
-							<p class="mt-1 text-3xl font-bold tracking-widest">
-								{newCode}
-							</p>
-
-							<p class="mt-2 text-sm text-zinc-500">
-								Send this code to the person you want to chat with.
-							</p>
-						</div>
-					{/if}
-				</div>
+				{#if error}
+					<p class="mt-3 text-sm text-red-500">{error}</p>
+				{/if}
 			</div>
 
 			<div class="mt-10">

@@ -10,7 +10,8 @@
 		orderBy,
 		serverTimestamp,
 		doc,
-		getDoc
+		getDoc,
+		updateDoc
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -26,14 +27,11 @@
 	let replies = $state<Record<string, any[]>>({});
 	let replyText = $state<Record<string, string>>({});
 
-	let tenantId = $derived(page.params.id);
+	// Rules state
+	let rulesText = $state('');
+	let savingRules = $state(false);
 
-	const links = [
-		{ label: 'Home', href: '/home' },
-		{ label: 'Chat', href: '/chat' },
-		{ label: 'shareSpace', href: '/sharespace' },
-		{ label: 'Tenants', href: '/tenants' }
-	];
+	let tenantId = $derived(page.params.id);
 
 	async function loadData(currentTenantId: string) {
 		if (!currentTenantId) return;
@@ -45,12 +43,14 @@
 		const tenantRef = doc(db, 'tenantSpaces', currentTenantId);
 		const tenantSnap = await getDoc(tenantRef);
 
-		if (!tenantSnap.exists() || !tenantSnap.data().members?.includes(user.uid)) {
+		if (!tenantSnap.exists()) {
 			goto('/tenants');
 			return;
 		}
 
-		isOwner = tenantSnap.data().ownerId === user.uid;
+		const data = tenantSnap.data();
+		isOwner = data.ownerId === user.uid;
+		rulesText = data.rules || '';
 
 		const q = query(
 			collection(db, 'tenantSpaces', currentTenantId, 'maintenance'),
@@ -78,6 +78,18 @@
 			loadData(tenantId);
 		}
 	});
+
+	async function saveRules() {
+		if (!tenantId) return;
+		savingRules = true;
+		try {
+			const tenantRef = doc(db, 'tenantSpaces', tenantId);
+			await updateDoc(tenantRef, { rules: rulesText });
+			alert('Rules updated successfully!');
+		} finally {
+			savingRules = false;
+		}
+	}
 
 	async function submitComplaint() {
 		if (!title.trim() || !description.trim() || submitting || !tenantId) return;
@@ -136,16 +148,44 @@
 
 			<div class="mt-6 flex items-center justify-between">
 				<div>
-					<h1 class="text-2xl font-bold tracking-tight">Maintenance</h1>
+					<h1 class="text-2xl font-bold tracking-tight">Tenant Dashboard</h1>
 					<p class="text-sm text-zinc-500">
 						{isOwner
-							? 'Review and respond to issues reported by your tenant.'
-							: 'Report a problem in your space.'}
+							? 'Manage rules, maintenance, and communicate with your tenant.'
+							: 'View Rules and report problems.'}
 					</p>
 				</div>
 				<span class="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">
 					{isOwner ? 'Owner' : 'Tenant'}
 				</span>
+			</div>
+
+			<!-- RULES BOARD SECTION -->
+			<div class="mt-8 rounded-2xl border border-zinc-200 p-6 shadow-sm">
+				<h2 class="text-base font-semibold">Rules</h2>
+				<p class="mt-0.5 text-xs text-zinc-500">Important guidelines set by the landlord.</p>
+
+				{#if isOwner}
+					<textarea
+						bind:value={rulesText}
+						placeholder="Write Rules here (e.g., Quiet hours after 10 PM, no smoking...)"
+						rows="4"
+						class="mt-4 w-full resize-none rounded-lg border border-zinc-200 p-3 text-sm outline-none focus:border-zinc-900"
+					></textarea>
+					<button
+						onclick={saveRules}
+						disabled={savingRules}
+						class="mt-3 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+					>
+						{savingRules ? 'Saving...' : 'Save Rules'}
+					</button>
+				{:else}
+					<div
+						class="mt-4 min-h-[80px] rounded-lg bg-zinc-50 p-4 text-sm whitespace-pre-line text-zinc-700"
+					>
+						{rulesText || 'No rules have been set for this space yet.'}
+					</div>
+				{/if}
 			</div>
 
 			{#if !isOwner}
@@ -173,7 +213,7 @@
 			{/if}
 
 			<div class="mt-10 space-y-6">
-				<h2 class="text-base font-semibold">Recent Requests</h2>
+				<h2 class="text-base font-semibold">Recent Maintenance Requests</h2>
 
 				{#if loading}
 					<p class="text-sm text-zinc-400">Loading requests...</p>

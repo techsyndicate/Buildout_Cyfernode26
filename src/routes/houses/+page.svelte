@@ -31,7 +31,7 @@
 				goto('/');
 				return;
 			} else if (tenant) {
-				goto('/tenant/home');
+				goto('/tenant/houses');
 				return;
 			}
 			name = user.displayName ?? 'User';
@@ -50,9 +50,7 @@
 			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-zinc-200/80 bg-white/95 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)] backdrop-blur-sm"
 		>
 			<div class="px-3 py-3">
-				<span class="text-lg font-light italic">tenant</span><span class="text-lg font-semibold"
-					>App</span
-				>
+				<span class="text-sm font-bold tracking-tight text-zinc-900">Tenant Space</span>
 			</div>
 
 			<nav class="mt-3 flex flex-1 flex-col gap-1">
@@ -61,7 +59,7 @@
 						type="button"
 						onclick={() => goto(link.href)}
 						class={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-							link.href === '/home'
+							link.href === '/houses'
 								? 'bg-blue-600 text-white shadow-sm'
 								: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
 						}`}
@@ -78,8 +76,8 @@
 			<div
 				class="rounded-2xl border border-white/60 bg-white/85 p-7 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm"
 			>
-				<h1 class="text-3xl tracking-tight text-zinc-950">
-					<span class="font-light italic">Welcome,</span> <span class="font-semibold">{name}!</span>
+				<h1 class="text-3xl font-bold tracking-tight text-zinc-950">
+					Welcome, {name}!
 				</h1>
 
 				<p class="mt-1 text-zinc-500">What would you like to do?</p>

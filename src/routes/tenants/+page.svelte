@@ -27,8 +27,11 @@
 		{ label: 'Home', href: '/home' },
 		{ label: 'Chat', href: '/chat' },
 		{ label: 'shareSpace', href: '/sharespace' },
-		{ label: 'Tenants', href: '/tenants' }
+		{ label: 'Tenants', href: '/tenants' },
+		{ label: 'Houses', href: '/houses' }
 	];
+
+	let tenant = $state(false);
 
 	async function loadSpaces(uid: string) {
 		const q = query(collection(db, 'tenantSpaces'), where('members', 'array-contains', uid));
@@ -92,9 +95,20 @@
 	}
 
 	onMount(() => {
+		const cookies = document.cookie.split('; ');
+
+		const tenantCookie = cookies.find((row) => row.startsWith('tenant='));
+
+		if (tenantCookie) {
+			const value = tenantCookie.split('=')[1];
+			tenant = value === 'true';
+		}
 		return onAuthStateChanged(auth, (user) => {
 			if (!user) goto('/');
-			else loadSpaces(user.uid);
+			else if (tenant) {
+				goto('/tenant/landlords');
+				return;
+			} else loadSpaces(user.uid);
 		});
 	});
 </script>
@@ -107,7 +121,9 @@
 			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)]"
 		>
 			<div class="px-3 py-3">
-				<span class="text-sm font-bold tracking-tight text-zinc-900">Buildout</span>
+				<span class="text-lg font-light italic">tenant</span><span class="text-lg font-semibold"
+					>App</span
+				>
 			</div>
 
 			<nav class="mt-3 flex flex-1 flex-col gap-1">
@@ -131,7 +147,10 @@
 	<main class="flex-1 overflow-y-auto p-10">
 		<div class="mx-auto max-w-4xl">
 			<div>
-				<h1 class="text-2xl font-bold tracking-tight">Tenants</h1>
+				<h1 class="text-3xl">
+					<span class="font-light italic">Manage</span> your
+					<span class="font-semibold">tenants</span>
+				</h1>
 				<p class="text-sm text-zinc-500">Manage your properties and connect with tenants.</p>
 			</div>
 

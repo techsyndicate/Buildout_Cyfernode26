@@ -31,6 +31,16 @@
 			console.log(err);
 		}
 	}
+
+	async function handleTenantLogin() {
+		try {
+			await signInWithPopup(auth, new GoogleAuthProvider());
+			document.cookie = 'tenant=true; path=/';
+			goto('/tenant/home');
+		} catch (err) {
+			console.log(err);
+		}
+	}
 </script>
 
 <div class="min-h-screen bg-white">
@@ -107,16 +117,27 @@
 
 		<main class="relative z-10 my-auto flex flex-col items-center text-center">
 			<h1 class="text-4xl font-extrabold text-white md:text-6xl">tenantApp</h1>
-			<p class="mt-4 text-lg text-zinc-300 md:text-xl">
+			<p class="mt-4 text-lg text-zinc-100 md:text-xl">
 				Your all-in-one solution for managing tenant relationships
 			</p>
 
-			<button
-				onclick={handleLogin}
-				class="mt-8 rounded-lg border border-white px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-black"
-			>
-				Login with Google
-			</button>
+			<div class="mt-8 flex items-center justify-center gap-4">
+				<button
+					onclick={handleLogin}
+					class="rounded-lg border border-white bg-black/70 px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-black"
+				>
+					Login with Google
+				</button>
+
+				<span class="text-xl font-bold text-white italic">OR</span>
+
+				<button
+					onclick={handleTenantLogin}
+					class="rounded-lg border border-white bg-black/70 px-6 py-3 font-semibold text-white transition hover:bg-white hover:text-black"
+				>
+					Tenant Login
+				</button>
+			</div>
 		</main>
 
 		<div class="relative z-10 text-center">
