@@ -9,12 +9,12 @@
 		query,
 		where,
 		doc,
-		getDoc,
 		updateDoc,
 		arrayUnion,
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
+	import DarkVeil from '$lib/components/Darkveil.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -119,6 +119,7 @@
 			const value = tenantCookie.split('=')[1];
 			tenant = value === 'true';
 		}
+
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (!user) {
 				goto('/');
@@ -143,17 +144,30 @@
 	}
 </script>
 
-<div class="flex h-screen w-full overflow-hidden bg-white text-black">
+<div class="relative flex h-screen w-full overflow-hidden bg-black text-black">
+	<div class="fixed inset-0 z-0 h-full w-full">
+		<DarkVeil
+			hueShift={0}
+			noiseIntensity={0}
+			scanlineIntensity={0}
+			speed={0.5}
+			scanlineFrequency={0}
+			warpAmount={0}
+			resolutionScale={1}
+		/>
+	</div>
+
 	<div
-		class={`shrink-0 overflow-hidden transition-all duration-300 ${sidebarOpen ? 'w-55' : 'w-0'}`}
+		class={`relative z-10 shrink-0 overflow-hidden transition-all duration-300 ${
+			sidebarOpen ? 'w-55' : 'w-0'
+		}`}
 	>
 		<div
-			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)]"
+			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-white/30 bg-white/20 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
 		>
 			<div class="px-3 py-3">
-				<span class="text-lg font-light italic">tenant</span><span class="text-lg font-semibold"
-					>App</span
-				>
+				<span class="text-lg font-light italic">tenant</span>
+				<span class="text-lg font-semibold">App</span>
 			</div>
 
 			<nav class="mt-3 flex flex-1 flex-col gap-1">
@@ -163,20 +177,20 @@
 						onclick={() => goto(link.href)}
 						class={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
 							link.href === '/chat'
-								? 'bg-blue-600 text-white shadow-sm'
-								: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+								? 'bg-blue-600/70 text-white shadow-sm'
+								: 'text-zinc-900 hover:bg-white/30 hover:text-black'
 						}`}
 					>
 						{link.label}
 					</button>
 				{/each}
 
-				<hr class="border" />
+				<hr class="my-2 border-black/20" />
 
 				<button
 					type="button"
 					onclick={logout}
-					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black hover:bg-red-500 hover:text-white"
+					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black transition hover:bg-red-500/80 hover:text-white"
 				>
 					Log Out
 				</button>
@@ -184,74 +198,102 @@
 		</div>
 	</div>
 
-	<main class="min-w-0 flex-1 overflow-y-auto p-8">
+	<main class="relative z-10 min-w-0 flex-1 overflow-y-auto p-8">
 		<div class="mx-auto max-w-4xl">
-			<h1 class="text-3xl">
-				<span class="font-light italic">Chat</span> <span>with your</span>
-				<span class="font-semibold">tenants</span>
-			</h1>
-			<p class="mt-2 text-zinc-600">Create a chat or join one using a code.</p>
+			<div
+				class="rounded-2xl border border-white/30 bg-white/20 p-7 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
+			>
+				<h1 class="text-3xl tracking-tight text-zinc-950">
+					<span class="font-light italic">Chat</span>
+					<span>with your</span>
+					<span class="font-semibold">tenants</span>
+				</h1>
 
-			<div class="mt-8">
-				<div
-					class="rounded-3xl border border-zinc-200 bg-white p-6 shadow-[0_6px_20px_rgba(0,0,0,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
-				>
-					<h2 class="mt-1 text-2xl font-bold">Create a new chat</h2>
+				<p class="mt-2 text-zinc-800">
+					Create a chat or join one using a code.
+				</p>
 
-					<button
-						onclick={createChat}
-						class="mt-6 rounded-xl bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
+				<div class="mt-8">
+					<div
+						class="rounded-3xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
 					>
-						Create Chat
-					</button>
+						<h2 class="mt-1 text-2xl font-bold text-zinc-950">
+							Create a new chat
+						</h2>
 
-					{#if newCode}
-						<div class="mt-5 rounded-2xl bg-zinc-100 p-4 shadow-inner">
-							<p class="text-sm text-zinc-500">Your chat code</p>
+						<button
+							onclick={createChat}
+							class="mt-6 rounded-xl bg-black/70 px-5 py-3 text-sm font-medium text-white transition hover:bg-black/90"
+						>
+							Create Chat
+						</button>
 
-							<p class="mt-1 text-3xl font-bold tracking-widest">
-								{newCode}
+						{#if newCode}
+							<div
+								class="mt-5 rounded-2xl border border-white/30 bg-white/20 p-4 shadow-inner backdrop-blur-lg"
+							>
+								<p class="text-sm text-zinc-600">
+									Your chat code
+								</p>
+
+								<p class="mt-1 text-3xl font-bold tracking-widest text-zinc-950">
+									{newCode}
+								</p>
+
+								<p class="mt-2 text-sm text-zinc-600">
+									Send this code to the person you want to chat with.
+								</p>
+							</div>
+						{/if}
+
+						{#if error}
+							<p class="mt-4 text-sm font-medium text-red-600">
+								{error}
 							</p>
+						{/if}
+					</div>
+				</div>
 
-							<p class="mt-2 text-sm text-zinc-500">
-								Send this code to the person you want to chat with.
-							</p>
+				<div class="mt-10">
+					<h2 class="text-xl font-bold text-zinc-950">
+						Your chats
+					</h2>
+
+					{#if loading}
+						<p class="mt-4 text-zinc-700">
+							Loading...
+						</p>
+					{:else if chats.length === 0}
+						<div
+							class="mt-4 rounded-2xl border border-white/40 bg-white/35 p-6 text-zinc-700 shadow-[0_6px_20px_rgba(0,0,0,0.10)] backdrop-blur-xl"
+						>
+							No chats yet.
+						</div>
+					{:else}
+						<div class="mt-4 space-y-3">
+							{#each chats as chat}
+								<button
+									onclick={() => goto(`/chat/${chat.id}`)}
+									class="flex w-full items-center justify-between rounded-2xl border border-white/40 bg-white/35 p-5 text-left shadow-[0_6px_20px_rgba(0,0,0,0.10)] backdrop-blur-xl transition hover:bg-white/45 hover:shadow-[0_10px_25px_rgba(0,0,0,0.15)]"
+								>
+									<div>
+										<p class="font-semibold text-zinc-950">
+											Chat
+										</p>
+
+										<p class="mt-1 text-sm text-zinc-600">
+											Code: {chat.code}
+										</p>
+									</div>
+
+									<span class="text-zinc-600">
+										→
+									</span>
+								</button>
+							{/each}
 						</div>
 					{/if}
 				</div>
-			</div>
-
-			<div class="mt-10">
-				<h2 class="text-xl font-bold">Your chats</h2>
-
-				{#if loading}
-					<p class="mt-4 text-zinc-500">Loading...</p>
-				{:else if chats.length === 0}
-					<div
-						class="mt-4 rounded-2xl border border-zinc-200 bg-white p-6 text-zinc-500 shadow-[0_6px_20px_rgba(0,0,0,0.06)]"
-					>
-						No chats yet.
-					</div>
-				{:else}
-					<div class="mt-4 space-y-3">
-						{#each chats as chat}
-							<button
-								onclick={() => goto(`/chat/${chat.id}`)}
-								class="flex w-full items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 text-left shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition hover:bg-zinc-50 hover:shadow-[0_10px_25px_rgba(0,0,0,0.09)]"
-							>
-								<div>
-									<p class="font-semibold">Chat</p>
-
-									<p class="mt-1 text-sm text-zinc-500">
-										Code: {chat.code}
-									</p>
-								</div>
-
-								<span class="text-zinc-400">→</span>
-							</button>
-						{/each}
-					</div>
-				{/if}
 			</div>
 		</div>
 	</main>

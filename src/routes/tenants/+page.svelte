@@ -14,6 +14,7 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
+	import DarkVeil from '$lib/components/Darkveil.svelte';
 
 	let loading = $state(true);
 	let tenantSpaces = $state<any[]>([]);
@@ -37,13 +38,19 @@
 		const q = query(collection(db, 'tenantSpaces'), where('members', 'array-contains', uid));
 		const snapshot = await getDocs(q);
 
-		tenantSpaces = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+		tenantSpaces = snapshot.docs.map((d) => ({
+			id: d.id,
+			...d.data()
+		}));
+
 		loading = false;
 	}
 
 	async function createSpace() {
 		const user = auth.currentUser;
+
 		if (!user || creating) return;
+
 		creating = true;
 
 		try {
@@ -57,6 +64,7 @@
 			});
 
 			newCode = code;
+
 			await loadSpaces(user.uid);
 		} finally {
 			creating = false;
@@ -67,6 +75,7 @@
 		error = '';
 
 		const user = auth.currentUser;
+
 		if (!user) return;
 
 		if (joinCode.length !== 6) {
@@ -103,12 +112,16 @@
 			const value = tenantCookie.split('=')[1];
 			tenant = value === 'true';
 		}
+
 		return onAuthStateChanged(auth, (user) => {
-			if (!user) goto('/');
-			else if (tenant) {
+			if (!user) {
+				goto('/');
+			} else if (tenant) {
 				goto('/tenant/landlords');
 				return;
-			} else loadSpaces(user.uid);
+			} else {
+				loadSpaces(user.uid);
+			}
 		});
 	});
 
@@ -119,17 +132,30 @@
 	}
 </script>
 
-<div class="flex h-screen w-full overflow-hidden bg-white text-zinc-900">
+<div class="relative flex h-screen w-full overflow-hidden bg-black text-zinc-900">
+	<div class="fixed inset-0 z-0 h-full w-full">
+		<DarkVeil
+			hueShift={0}
+			noiseIntensity={0}
+			scanlineIntensity={0}
+			speed={0.5}
+			scanlineFrequency={0}
+			warpAmount={0}
+			resolutionScale={1}
+		/>
+	</div>
+
 	<div
-		class={`shrink-0 overflow-hidden transition-all duration-300 ${sidebarOpen ? 'w-55' : 'w-0'}`}
+		class={`relative z-10 shrink-0 overflow-hidden transition-all duration-300 ${
+			sidebarOpen ? 'w-55' : 'w-0'
+		}`}
 	>
 		<div
-			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-zinc-200 bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)]"
+			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-white/30 bg-white/20 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
 		>
 			<div class="px-3 py-3">
-				<span class="text-lg font-light italic">tenant</span><span class="text-lg font-semibold"
-					>App</span
-				>
+				<span class="text-lg font-light italic">tenant</span>
+				<span class="text-lg font-semibold">App</span>
 			</div>
 
 			<nav class="mt-3 flex flex-1 flex-col gap-1">
@@ -139,20 +165,20 @@
 						onclick={() => goto(link.href)}
 						class={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
 							link.href === '/tenants'
-								? 'bg-blue-600 text-white shadow-sm'
-								: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+								? 'bg-blue-600/70 text-white shadow-sm'
+								: 'text-zinc-900 hover:bg-white/30 hover:text-black'
 						}`}
 					>
 						{link.label}
 					</button>
 				{/each}
 
-				<hr class="border" />
+				<hr class="my-2 border-black/20" />
 
 				<button
 					type="button"
 					onclick={logout}
-					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black hover:bg-red-500 hover:text-white"
+					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black transition hover:bg-red-500/80 hover:text-white"
 				>
 					Log Out
 				</button>
@@ -160,73 +186,103 @@
 		</div>
 	</div>
 
-	<main class="flex-1 overflow-y-auto p-10">
+	<main class="relative z-10 min-w-0 flex-1 overflow-y-auto p-10">
 		<div class="mx-auto max-w-4xl">
-			<div>
-				<h1 class="text-3xl">
-					<span class="font-light italic">Manage</span> your
-					<span class="font-semibold">tenants</span>
-				</h1>
-				<p class="text-sm text-zinc-500">Manage your properties and connect with tenants.</p>
-			</div>
+			<div
+				class="rounded-2xl border border-white/30 bg-white/20 p-7 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
+			>
+				<div>
+					<h1 class="text-3xl tracking-tight text-zinc-950">
+						<span class="font-light italic">Manage</span>
+						your
+						<span class="font-semibold">tenants</span>
+					</h1>
 
-			<div class="mt-8">
-				<div
-					class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_6px_20px_rgba(0,0,0,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
-				>
-					<h2 class="mt-2 text-base font-semibold">Create a property space</h2>
-
-					<p class="mt-1 text-sm text-zinc-500">
-						Generate an invite code to share with your tenant.
+					<p class="text-sm text-zinc-700">
+						Manage your properties and connect with tenants.
 					</p>
+				</div>
 
-					<button
-						onclick={createSpace}
-						disabled={creating}
-						class="mt-6 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-50"
+				<div class="mt-8">
+					<div
+						class="rounded-2xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
 					>
-						{creating ? 'Creating...' : 'Create Space'}
-					</button>
+						<h2 class="mt-2 text-base font-semibold text-zinc-950">
+							Create a property space
+						</h2>
 
-					{#if newCode}
-						<div class="mt-6 rounded-xl bg-zinc-50 p-4 text-center shadow-inner">
-							<span class="text-xs text-zinc-400">Your Invite Code</span>
+						<p class="mt-1 text-sm text-zinc-700">
+							Generate an invite code to share with your tenant.
+						</p>
 
-							<p class="mt-1 text-2xl font-bold tracking-widest text-zinc-900">
-								{newCode}
+						<button
+							onclick={createSpace}
+							disabled={creating}
+							class="mt-6 rounded-lg bg-black/70 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-black/90 disabled:opacity-50"
+						>
+							{creating ? 'Creating...' : 'Create Space'}
+						</button>
+
+						{#if newCode}
+							<div
+								class="mt-6 rounded-xl border border-white/30 bg-white/20 p-4 text-center shadow-inner backdrop-blur-lg"
+							>
+								<span class="text-xs text-zinc-600">
+									Your Invite Code
+								</span>
+
+								<p class="mt-1 text-2xl font-bold tracking-widest text-zinc-950">
+									{newCode}
+								</p>
+							</div>
+						{/if}
+
+						{#if error}
+							<p class="mt-4 text-sm font-medium text-red-600">
+								{error}
 							</p>
+						{/if}
+					</div>
+				</div>
+
+				<div class="mt-12">
+					<h2 class="text-base font-semibold text-zinc-950">
+						Your Properties
+					</h2>
+
+					{#if loading}
+						<p class="mt-4 text-sm text-zinc-700">
+							Loading spaces...
+						</p>
+					{:else if tenantSpaces.length === 0}
+						<div
+							class="mt-4 rounded-2xl border border-white/40 bg-white/20 p-5 text-sm text-zinc-700 backdrop-blur-lg"
+						>
+							You aren't connected to any properties yet.
+						</div>
+					{:else}
+						<div class="mt-4 grid gap-4 md:grid-cols-2">
+							{#each tenantSpaces as tenant}
+								<button
+									onclick={() => goto(`/tenants/${tenant.id}`)}
+									class="flex items-center justify-between rounded-2xl border border-white/40 bg-white/35 p-5 text-left shadow-[0_6px_20px_rgba(0,0,0,0.10)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_25px_rgba(0,0,0,0.15)]"
+								>
+									<div>
+										<span class="font-medium text-zinc-950">
+											Tenant Space
+										</span>
+
+										<p class="mt-1 text-xs text-zinc-600">
+											Code: {tenant.code}
+										</p>
+									</div>
+
+									<span class="text-zinc-600">→</span>
+								</button>
+							{/each}
 						</div>
 					{/if}
 				</div>
-			</div>
-
-			<div class="mt-12">
-				<h2 class="text-base font-semibold">Your Properties</h2>
-
-				{#if loading}
-					<p class="mt-4 text-sm text-zinc-400">Loading spaces...</p>
-				{:else if tenantSpaces.length === 0}
-					<p class="mt-4 text-sm text-zinc-400">You aren't connected to any properties yet.</p>
-				{:else}
-					<div class="mt-4 grid gap-4 md:grid-cols-2">
-						{#each tenantSpaces as tenant}
-							<button
-								onclick={() => goto(`/tenants/${tenant.id}`)}
-								class="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 text-left shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition hover:-translate-y-0.5 hover:border-zinc-300 hover:bg-zinc-50 hover:shadow-[0_10px_25px_rgba(0,0,0,0.09)]"
-							>
-								<div>
-									<span class="font-medium text-zinc-900">Tenant Space</span>
-
-									<p class="mt-1 text-xs text-zinc-500">
-										Code: {tenant.code}
-									</p>
-								</div>
-
-								<span class="text-zinc-400">→</span>
-							</button>
-						{/each}
-					</div>
-				{/if}
 			</div>
 		</div>
 	</main>

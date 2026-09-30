@@ -1,160 +1,172 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { auth, db } from '$lib/firebase';
-	import { onAuthStateChanged, signOut } from 'firebase/auth';
-	import {
-		doc,
-		getDoc,
-		collection,
-		addDoc,
-		query,
-		orderBy,
-		onSnapshot,
-		serverTimestamp
-	} from 'firebase/firestore';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
+    import { onMount } from 'svelte';
+    import { auth, db } from '$lib/firebase';
+    import { onAuthStateChanged, signOut } from 'firebase/auth';
+    import {
+        doc,
+        getDoc,
+        collection,
+        addDoc,
+        query,
+        orderBy,
+        onSnapshot,
+        serverTimestamp
+    } from 'firebase/firestore';
+    import { goto } from '$app/navigation';
+    import { page } from '$app/state';
+    import ShapeGrid from '$lib/components/DarkVeil.svelte';
 
-	let messages = $state<any[]>([]);
-	let text = $state('');
-	let userId = $state('');
-	let allowed = $state(false);
-	let loading = $state(true);
+    let messages = $state<any[]>([]);
+    let text = $state('');
+    let userId = $state('');
+    let allowed = $state(false);
+    let loading = $state(true);
 
-	let chatId = $derived(page.params.id);
+    let chatId = $derived(page.params.id);
 
-	async function loadChat(currentChatId: string) {
-		if (!currentChatId || !auth.currentUser) return;
-		loading = true;
+    async function loadChat(currentChatId: string) {
+        if (!currentChatId || !auth.currentUser) return;
+        loading = true;
 
-		const chat = await getDoc(doc(db, 'chatrooms', currentChatId));
+        const chat = await getDoc(doc(db, 'chatrooms', currentChatId));
 
-		if (!chat.exists() || !chat.data().members?.includes(auth.currentUser.uid)) {
-			goto('/chat');
-			return;
-		}
+        if (!chat.exists() || !chat.data().members?.includes(auth.currentUser.uid)) {
+            goto('/chat');
+            return;
+        }
 
-		allowed = true;
-		loading = false;
+        allowed = true;
+        loading = false;
 
-		const messagesQuery = query(
-			collection(db, 'chatrooms', currentChatId, 'messages'),
-			orderBy('timestamp', 'asc')
-		);
+        const messagesQuery = query(
+            collection(db, 'chatrooms', currentChatId, 'messages'),
+            orderBy('timestamp', 'asc')
+        );
 
-		return onSnapshot(messagesQuery, (snapshot) => {
-			messages = snapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data()
-			}));
-		});
-	}
+        return onSnapshot(messagesQuery, (snapshot) => {
+            messages = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        });
+    }
 
-	$effect(() => {
-		if (chatId && userId) {
-			const unsubscribe = loadChat(chatId);
-			return () => {
-				unsubscribe.then((unsub) => unsub?.());
-			};
-		}
-	});
+    $effect(() => {
+        if (chatId && userId) {
+            const unsubscribe = loadChat(chatId);
+            return () => {
+                unsubscribe.then((unsub) => unsub?.());
+            };
+        }
+    });
 
-	async function sendMessage() {
-		if (!text.trim() || !userId || !chatId) return;
+    async function sendMessage() {
+        if (!text.trim() || !userId || !chatId) return;
 
-		await addDoc(collection(db, 'chatrooms', chatId, 'messages'), {
-			sender: userId,
-			text: text.trim(),
-			timestamp: serverTimestamp()
-		});
+        await addDoc(collection(db, 'chatrooms', chatId, 'messages'), {
+            sender: userId,
+            text: text.trim(),
+            timestamp: serverTimestamp()
+        });
 
-		text = '';
-	}
+        text = '';
+    }
 
-	onMount(() => {
-		return onAuthStateChanged(auth, (user) => {
-			if (!user) {
-				goto('/');
-				return;
-			}
+    onMount(() => {
+        return onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                goto('/');
+                return;
+            }
 
-			userId = user.uid;
-			if (chatId) {
-				loadChat(chatId);
-			}
-		});
-	});
+            userId = user.uid;
+            if (chatId) {
+                loadChat(chatId);
+            }
+        });
+    });
 
-	async function logout() {
-		await signOut(auth);
-		goto("/");
-	}
-
+    async function logout() {
+        await signOut(auth);
+        goto("/");
+    }
 </script>
 
-{#if loading}
-	<div class="flex h-screen items-center justify-center bg-white text-zinc-900">
-		<p class="text-sm text-zinc-400">Loading chat...</p>
-	</div>
-{:else if allowed}
-	<div class="flex h-screen flex-col bg-white text-zinc-900">
-		<header class="flex items-center gap-4 border-b border-zinc-200 p-5">
-			<button
-				onclick={() => goto('/chat')}
-				class="rounded-lg border border-zinc-200 px-3 py-2 text-sm hover:bg-zinc-50"
-			>
-				←
-			</button>
+<div class="relative flex h-screen w-full overflow-hidden text-zinc-900">
+    <div class="absolute inset-0 -z-10 h-full w-full bg-cover bg-center" style="background-image: url('YOUR_WALLPAPER_URL_HERE');">
+        <div class="absolute inset-0 bg-black/25 backdrop-blur-[2px]"></div>
+        <ShapeGrid
+            shape="hexagon"
+            direction="right"
+            speed={0.8}
+            squareSize={70}
+            hoverTrailAmount={4}
+            borderColor="rgba(255, 255, 255, 0.2)"
+            hoverFillColor="rgba(255, 255, 255, 0.1)"
+            fadeColor="rgba(0, 0, 0, 0.4)"
+        />
+    </div>
 
-			<div>
-				<h1 class="font-bold">Chat</h1>
-				<p class="text-xs text-zinc-400">ID: {chatId}</p>
-			</div>
-		</header>
+    {#if loading}
+        <div class="flex h-screen w-full items-center justify-center">
+            <p class="text-sm font-light text-white/80">Loading chat...</p>
+        </div>
+    {:else if allowed}
+        <div class="flex h-screen w-full flex-col backdrop-blur-md">
+            <header class="flex items-center gap-4 border-b border-white/20 bg-white/15 px-6 py-4 backdrop-blur-xl">
+                <button
+                    onclick={() => goto('/chat')}
+                    class="rounded-xl border border-white/30 bg-white/20 px-3.5 py-2 text-sm text-white transition-all duration-200 hover:bg-white/30"
+                >
+                    &larr;
+                </button>
 
-		<main class="flex-1 overflow-y-auto bg-zinc-50 p-6">
-			<div class="mx-auto flex max-w-3xl flex-col gap-3">
-				{#if messages.length === 0}
-					<p class="text-center text-sm text-zinc-400">No messages yet. Say something.</p>
-				{/if}
+                <div>
+                    <h1 class="font-semibold text-white">Chat Room</h1>
+                    <p class="text-xs text-white/70 font-light">ID: {chatId}</p>
+                </div>
+            </header>
 
-				{#each messages as message}
-					<div class={`flex ${message.sender === userId ? 'justify-end' : 'justify-start'}`}>
-						<div
-							class={`max-w-[70%] rounded-2xl px-4 py-3 text-sm ${
-								message.sender === userId
-									? 'bg-zinc-900 text-white'
-									: 'border border-zinc-200 bg-white text-zinc-900'
-							}`}
-						>
-							<p>{message.text}</p>
-						</div>
-					</div>
-				{/each}
-			</div>
-		</main>
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="mx-auto flex max-w-3xl flex-col gap-3.5">
+                    {#if messages.length === 0}
+                        <p class="text-center text-sm font-light text-white/70 mt-4">No messages yet. Say something.</p>
+                    {/if}
 
-		<form
-			onsubmit={(event) => {
-				event.preventDefault();
-				sendMessage();
-			}}
-			class="border-t border-zinc-200 bg-white p-4"
-		>
-			<div class="mx-auto flex max-w-3xl gap-3">
-				<input
-					bind:value={text}
-					placeholder="Type a message..."
-					class="min-w-0 flex-1 rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900"
-				/>
+                    {#each messages as message}
+                        <div class={`flex ${message.sender === userId ? 'justify-end' : 'justify-start'}`}>
+                            <div
+                                class={`max-w-[70%] rounded-2xl px-4 py-3 text-sm shadow-lg backdrop-blur-md transition-all ${
+                                    message.sender === userId
+                                        ? 'bg-white/35 border border-white/40 text-white font-medium'
+                                        : 'border border-white/20 bg-white/20 text-white'
+                                }`}
+                            >
+                                <p class="leading-relaxed">{message.text}</p>
+                            </div>
+                        </div>
+                    {/each}
+                </div>
+            </main>
 
-				<button
-					type="submit"
-					class="rounded-lg bg-zinc-900 px-5 py-3 text-sm font-medium text-white hover:bg-zinc-800"
-				>
-					Send
-				</button>
-			</div>
-		</form>
-	</div>
-{/if}
+            <form
+                onsubmit={(event) => {
+                    event.preventDefault();
+                    sendMessage();
+                }}
+                class="border-t border-white/20 bg-white/15 p-4 backdrop-blur-xl"
+            >
+                <div class="mx-auto flex max-w-3xl gap-3">
+                    <input
+                        bind:value={text}
+                        placeholder="Type a message..."
+                        class="min-w-0 flex-1 rounded-2xl border border-white/30 bg-white/20 px-4 py-3 text-sm text-white placeholder-white/60 outline-none backdrop-blur-md transition-all focus:border-white/60 focus:bg-white/30"
+                    />
+
+                    <button
+                    </button>
+                </div>
+            </form>
+        </div>
+    {/if}
+</div>

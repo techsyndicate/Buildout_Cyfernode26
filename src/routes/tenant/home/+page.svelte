@@ -3,6 +3,7 @@
 	import { auth } from '$lib/firebase';
 	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import { goto } from '$app/navigation';
+	import DarkVeil from '$lib/components/Darkveil.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -26,6 +27,7 @@
 			const value = tenantCookie.split('=')[1];
 			tenant = value === 'true';
 		}
+
 		onAuthStateChanged(auth, (user) => {
 			if (!user) {
 				goto('/');
@@ -34,6 +36,7 @@
 				goto('/home');
 				return;
 			}
+
 			name = user.displayName ?? 'User';
 		});
 	});
@@ -45,20 +48,30 @@
 	}
 </script>
 
-<div
-	class="flex h-screen w-full overflow-hidden bg-cover bg-fixed bg-center text-black"
-	style="background-image: url('/xyz.png');"
->
+<div class="relative flex h-screen w-full overflow-hidden bg-black text-black">
+	<div class="fixed inset-0 z-0 h-full w-full">
+		<DarkVeil
+			hueShift={0}
+			noiseIntensity={0}
+			scanlineIntensity={0}
+			speed={0.5}
+			scanlineFrequency={0}
+			warpAmount={0}
+			resolutionScale={1}
+		/>
+	</div>
+
 	<div
-		class={`shrink-0 overflow-hidden transition-all duration-300 ${sidebarOpen ? 'w-55' : 'w-0'}`}
+		class={`relative z-10 shrink-0 overflow-hidden transition-all duration-300 ${
+			sidebarOpen ? 'w-55' : 'w-0'
+		}`}
 	>
 		<div
-			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-zinc-200/80 bg-white/95 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)] backdrop-blur-sm"
+			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-white/30 bg-white/20 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
 		>
 			<div class="px-3 py-3">
-				<span class="text-lg font-light italic">tenant</span><span class="text-lg font-semibold"
-					>App</span
-				>
+				<span class="text-lg font-light italic text-zinc-950">tenant</span
+				><span class="text-lg font-semibold text-zinc-950">App</span>
 			</div>
 
 			<nav class="mt-3 flex flex-1 flex-col gap-1">
@@ -68,20 +81,20 @@
 						onclick={() => goto(link.href)}
 						class={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
 							link.href === '/tenant/home'
-								? 'bg-blue-600 text-white shadow-sm'
-								: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+								? 'bg-blue-600/70 text-white shadow-sm'
+								: 'text-zinc-900 hover:bg-white/30 hover:text-black'
 						}`}
 					>
 						{link.label}
 					</button>
 				{/each}
 
-				<hr class="border" />
+				<hr class="my-2 border-black/20" />
 
 				<button
 					type="button"
 					onclick={logout}
-					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black hover:bg-red-500 hover:text-white"
+					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black transition hover:bg-red-500/80 hover:text-white"
 				>
 					Log Out
 				</button>
@@ -89,40 +102,47 @@
 		</div>
 	</div>
 
-	<main class="min-w-0 flex-1 overflow-y-auto p-8">
+	<main class="relative z-10 min-w-0 flex-1 overflow-y-auto p-8">
 		<div class="mx-auto max-w-6xl">
 			<div
-				class="rounded-2xl border border-white/60 bg-white/85 p-7 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm"
+				class="rounded-2xl border border-white/30 bg-white/20 p-7 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
 			>
 				<h1 class="text-3xl font-bold tracking-tight text-zinc-950">
 					Welcome, {name}!
 				</h1>
 
-				<p class="mt-1 text-zinc-500">What would you like to do?</p>
+				<p class="mt-1 text-zinc-700">What would you like to do?</p>
 
-				<h2 class="mt-20 text-2xl font-semibold tracking-tight text-zinc-950">Quick Actions</h2>
+				<h2 class="mt-20 text-2xl font-semibold tracking-tight text-zinc-950">
+					Quick Actions
+				</h2>
 
 				<div
-					class="mt-5 grid auto-rows-55 grid-cols-1 gap-4 rounded-3xl border border-zinc-200 bg-white/70 p-2 shadow-[0_10px_35px_rgba(0,0,0,0.08)] md:grid-cols-2 lg:grid-cols-4"
+					class="mt-5 grid auto-rows-55 grid-cols-1 gap-4 rounded-3xl border border-white/30 bg-white/20 p-2 shadow-[0_10px_35px_rgba(0,0,0,0.12)] backdrop-blur-lg md:grid-cols-2 lg:grid-cols-4"
 				>
 					<div
-						class="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.10)] lg:col-span-2 lg:row-span-2"
+						class="flex flex-col justify-between rounded-2xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)] lg:col-span-2 lg:row-span-2"
 					>
 						<div>
-							<h2 class="text-3xl font-bold tracking-tight text-zinc-950">Check your landlords</h2>
-							<p class="mt-3 max-w-md text-zinc-600">View and manage your landlords.</p>
+							<h2 class="text-3xl font-bold tracking-tight text-zinc-950">
+								Check your landlords
+							</h2>
+
+							<p class="mt-3 max-w-md text-zinc-700">
+								View and manage your landlords.
+							</p>
 						</div>
 
 						<a
-							href="/tenants"
-							class="w-fit rounded-xl bg-black px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800 hover:shadow-md"
+							href="/tenant/landlords"
+							class="w-fit rounded-xl bg-black/70 px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-black/90 hover:shadow-md"
 						>
 							Manage Landlords →
 						</a>
 					</div>
 
 					<div
-						class="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.10)] lg:col-span-2"
+						class="flex flex-col justify-between rounded-2xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)] lg:col-span-2"
 					>
 						<div>
 							<h2 class="mt-1 text-2xl font-bold tracking-tight text-zinc-950">
@@ -132,35 +152,39 @@
 
 						<a
 							href="/sharespace"
-							class="mt-4 w-fit rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium transition hover:bg-black hover:text-white hover:shadow-md"
+							class="mt-4 w-fit rounded-xl border border-white/40 bg-white/20 px-4 py-2 text-sm font-medium text-zinc-950 backdrop-blur-lg transition hover:bg-black/70 hover:text-white hover:shadow-md"
 						>
 							Explore →
 						</a>
 					</div>
 
 					<div
-						class="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.10)]"
+						class="flex flex-col justify-between rounded-2xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
 					>
 						<div>
-							<h2 class="mt-1 text-xl font-bold tracking-tight text-zinc-950">Your houses</h2>
+							<h2 class="mt-1 text-xl font-bold tracking-tight text-zinc-950">
+								Your houses
+							</h2>
 						</div>
 
 						<a
-							href="/houses"
-							class="text-sm font-medium text-zinc-800 underline underline-offset-4 hover:text-black"
+							href="/tenant/houses"
+							class="text-sm font-medium text-zinc-800 underline underline-offset-4 transition hover:text-black"
 						>
 							View houses →
 						</a>
 					</div>
 
 					<div
-						class="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-6 shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.10)]"
+						class="flex flex-col justify-between rounded-2xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
 					>
 						<div>
-							<h2 class="mt-1 text-xl font-bold tracking-tight text-zinc-950">Recent activity</h2>
+							<h2 class="mt-1 text-xl font-bold tracking-tight text-zinc-950">
+								Recent activity
+							</h2>
 						</div>
 
-						<p class="text-sm text-zinc-500">Nothing here yet.</p>
+						<p class="text-sm text-zinc-700">Nothing here yet.</p>
 					</div>
 				</div>
 			</div>

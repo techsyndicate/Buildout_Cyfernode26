@@ -13,6 +13,7 @@
 		deleteDoc,
 		doc
 	} from 'firebase/firestore';
+	import DarkVeil from '$lib/components/Darkveil.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -215,18 +216,29 @@
 	});
 </script>
 
-<div
-	class="flex h-screen w-full overflow-hidden bg-cover bg-fixed bg-center text-black"
-	style="background-image: url('/xyz.png');"
->
+<div class="relative flex h-screen w-full overflow-hidden bg-black text-black">
+	<div class="fixed inset-0 z-0 h-full w-full">
+		<DarkVeil
+			hueShift={0}
+			noiseIntensity={0}
+			scanlineIntensity={0}
+			speed={0.5}
+			scanlineFrequency={0}
+			warpAmount={0}
+			resolutionScale={1}
+		/>
+	</div>
+
 	<div
-		class={`shrink-0 overflow-hidden transition-all duration-300 ${sidebarOpen ? 'w-55' : 'w-0'}`}
+		class={`relative z-10 shrink-0 overflow-hidden transition-all duration-300 ${
+			sidebarOpen ? 'w-55' : 'w-0'
+		}`}
 	>
 		<div
-			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-zinc-200/80 bg-white/95 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)] backdrop-blur-sm"
+			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-white/30 bg-white/20 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
 		>
 			<div class="px-3 py-3">
-				<span class="text-lg font-bold text-zinc-900">
+				<span class="text-lg font-bold text-zinc-950">
 					<span class="font-light italic">tenant</span><span class="font-semibold">App</span>
 				</span>
 			</div>
@@ -238,20 +250,20 @@
 						onclick={() => goto(link.href)}
 						class={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
 							link.href === '/sharespace'
-								? 'bg-blue-600 text-white shadow-sm'
-								: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+								? 'bg-blue-600/70 text-white shadow-sm'
+								: 'text-zinc-900 hover:bg-white/30 hover:text-black'
 						}`}
 					>
 						{link.label}
 					</button>
 				{/each}
 
-				<hr class="border" />
+				<hr class="my-2 border-black/20" />
 
 				<button
 					type="button"
 					onclick={logout}
-					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black hover:bg-red-500 hover:text-white"
+					class="w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-black transition hover:bg-red-500/80 hover:text-white"
 				>
 					Log Out
 				</button>
@@ -259,23 +271,25 @@
 		</div>
 	</div>
 
-	<main class="min-w-0 flex-1 overflow-y-auto">
+	<main class="relative z-10 min-w-0 flex-1 overflow-y-auto">
 		<div class="flex min-h-screen items-center justify-center p-8">
 			<div
-				class="min-h-[550px] w-full max-w-6xl rounded-[25px] bg-white/85 p-8 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm"
+				class="min-h-[550px] w-full max-w-6xl rounded-[25px] border border-white/30 bg-white/20 p-8 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
 			>
 				<h1 class="text-3xl tracking-tight text-zinc-950">
 					<span class="font-medium">share</span><span class="font-light italic">Space</span>
 				</h1>
 
-				<p class="mt-2 text-sm text-zinc-500">Find somewhere useful. Rent somewhere you don't.</p>
+				<p class="mt-2 text-sm text-zinc-800">
+					Find somewhere useful. Rent somewhere you don't.
+				</p>
 
 				<div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
 					{#each properties as property}
 						<button
 							type="button"
 							onclick={() => openProperty(property)}
-							class="h-48 cursor-pointer rounded-2xl border border-zinc-200 bg-white p-6 text-left shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.10)]"
+							class="h-48 cursor-pointer rounded-2xl border border-white/40 bg-white/35 p-6 text-left shadow-[0_4px_15px_rgba(0,0,0,0.12)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)]"
 						>
 							<div class="flex h-full items-center gap-5">
 								<img
@@ -284,7 +298,7 @@
 									class="h-24 w-24 rounded-[25px] object-cover"
 								/>
 
-								<div class="space-y-1 text-sm text-zinc-600">
+								<div class="space-y-1 text-sm text-zinc-700">
 									<p class="font-semibold text-zinc-950">{property.type}</p>
 
 									<p>
@@ -292,7 +306,7 @@
 										{property.size > 1 ? ' People' : ' Person'}
 									</p>
 
-									<p class="text-xs text-zinc-400">{property.ownerEmail}</p>
+									<p class="text-xs text-zinc-500">{property.ownerEmail}</p>
 								</div>
 							</div>
 						</button>
@@ -300,22 +314,26 @@
 				</div>
 
 				<div
-					class="mt-10 flex min-h-36 items-center justify-between gap-8 rounded-2xl border border-zinc-200 bg-zinc-50 px-8 py-7"
+					class="mt-10 flex min-h-36 items-center justify-between gap-8 rounded-2xl border border-white/40 bg-white/35 px-8 py-7 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl"
 				>
 					<div class="max-w-xs">
-						<p class="text-xs font-medium tracking-wider text-zinc-400 uppercase">
+						<p class="text-xs font-medium tracking-wider text-zinc-600 uppercase">
 							have some space?
 						</p>
 
-						<p class="mt-1 text-lg font-medium text-zinc-950">Let someone make use of it.</p>
+						<p class="mt-1 text-lg font-medium text-zinc-950">
+							Let someone make use of it.
+						</p>
 
-						<p class="mt-1 text-sm text-zinc-500">List an office, kitchen, garage or pool.</p>
+						<p class="mt-1 text-sm text-zinc-700">
+							List an office, kitchen, garage or pool.
+						</p>
 					</div>
 
 					<div class="flex items-center gap-8">
 						<div class="hidden text-right sm:block">
-							<p class="text-sm font-medium text-zinc-700">Your space</p>
-							<p class="mt-1 text-xs text-zinc-400">Set your own availability</p>
+							<p class="text-sm font-medium text-zinc-800">Your space</p>
+							<p class="mt-1 text-xs text-zinc-600">Set your own availability</p>
 						</div>
 
 						<button class="white" onclick={rent}>Rent Now</button>
@@ -326,14 +344,14 @@
 	</main>
 
 	{#if showRentModal}
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
 			<div
-				class="relative w-full max-w-md rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
+				class="relative w-full max-w-md rounded-3xl border border-white/40 bg-white/35 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.25)] backdrop-blur-xl"
 			>
 				<button
 					type="button"
 					onclick={() => (showRentModal = false)}
-					class="absolute top-4 right-5 text-2xl leading-none text-zinc-400 transition hover:text-zinc-900"
+					class="absolute top-4 right-5 text-2xl leading-none text-zinc-600 transition hover:text-zinc-950"
 				>
 					×
 				</button>
@@ -343,11 +361,11 @@
 				<div class="mt-6 space-y-5">
 					<div class="flex gap-4">
 						<div class="flex-1">
-							<label class="mb-2 block text-sm font-medium text-zinc-700">Type</label>
+							<label class="mb-2 block text-sm font-medium text-zinc-800">Type</label>
 
 							<select
 								bind:value={propertyType}
-								class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500"
+								class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 outline-none backdrop-blur-md focus:border-blue-500"
 							>
 								<option value="Office">Office</option>
 								<option value="Kitchen">Kitchen</option>
@@ -357,7 +375,7 @@
 						</div>
 
 						<div class="flex-1">
-							<label class="mb-2 block text-sm font-medium text-zinc-700">Size</label>
+							<label class="mb-2 block text-sm font-medium text-zinc-800">Size</label>
 
 							<div class="flex items-center gap-2">
 								<input
@@ -366,16 +384,18 @@
 									step="1"
 									placeholder="10"
 									bind:value={propertySize}
-									class="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+									class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 outline-none backdrop-blur-md focus:border-blue-500"
 								/>
 
-								<span class="text-sm whitespace-nowrap text-zinc-500">people</span>
+								<span class="text-sm whitespace-nowrap text-zinc-700">people</span>
 							</div>
 						</div>
 					</div>
 
 					<div>
-						<label class="mb-2 block text-sm font-medium text-zinc-700"> Property image </label>
+						<label class="mb-2 block text-sm font-medium text-zinc-800">
+							Property image
+						</label>
 
 						<input
 							type="file"
@@ -384,11 +404,11 @@
 								const input = e.currentTarget as HTMLInputElement;
 								propertyImage = input.files?.[0] ?? null;
 							}}
-							class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm"
+							class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm backdrop-blur-md"
 						/>
 
 						{#if propertyImage}
-							<p class="mt-2 truncate text-xs text-zinc-400">
+							<p class="mt-2 truncate text-xs text-zinc-600">
 								{propertyImage.name}
 							</p>
 						{/if}
@@ -398,7 +418,7 @@
 						type="button"
 						onclick={submitRent}
 						disabled={uploading || !propertyImage || !propertySize}
-						class="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+						class="w-full rounded-xl bg-blue-600/80 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						{uploading ? 'Uploading...' : 'Submit'}
 					</button>
@@ -408,14 +428,14 @@
 	{/if}
 
 	{#if selectedProperty}
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
 			<div
-				class="relative w-full max-w-md rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
+				class="relative w-full max-w-md rounded-3xl border border-white/40 bg-white/35 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.25)] backdrop-blur-xl"
 			>
 				<button
 					type="button"
 					onclick={closeProperty}
-					class="absolute top-4 right-5 text-2xl leading-none text-zinc-400 transition hover:text-zinc-900"
+					class="absolute top-4 right-5 text-2xl leading-none text-zinc-600 transition hover:text-zinc-950"
 				>
 					×
 				</button>
@@ -432,11 +452,11 @@
 							{selectedProperty.type}
 						</h1>
 
-						<p class="mt-1 text-sm text-zinc-500">
+						<p class="mt-1 text-sm text-zinc-700">
 							{selectedProperty.ownerEmail}
 						</p>
 
-						<p class="mt-1 text-sm text-zinc-500">
+						<p class="mt-1 text-sm text-zinc-700">
 							{selectedProperty.size}
 							{selectedProperty.size > 1 ? ' People' : ' Person'}
 						</p>
@@ -445,21 +465,23 @@
 
 				{#if selectedProperty.ownerId === auth.currentUser?.uid}
 					<div class="mt-7">
-						<p class="text-sm text-zinc-500">
+						<p class="text-sm text-zinc-700">
 							This is your property. Taking it off the market will remove it from shareSpace.
 						</p>
 
 						<button
 							type="button"
 							onclick={removeProperty}
-							class="mt-5 w-full rounded-xl bg-red-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-600"
+							class="mt-5 w-full rounded-xl bg-red-500/80 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-600"
 						>
 							Take off market
 						</button>
 					</div>
 				{:else}
 					<div class="mt-7">
-						<label class="mb-2 block text-sm font-medium text-zinc-700"> How many hours? </label>
+						<label class="mb-2 block text-sm font-medium text-zinc-800">
+							How many hours?
+						</label>
 
 						<input
 							type="number"
@@ -467,14 +489,14 @@
 							step="1"
 							placeholder="2"
 							bind:value={hours}
-							class="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+							class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 outline-none backdrop-blur-md focus:border-blue-500"
 						/>
 					</div>
 
 					<button
 						type="button"
 						onclick={pay}
-						class="mt-5 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+						class="mt-5 w-full rounded-xl bg-blue-600/80 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
 					>
 						Pay ₹{amount}
 					</button>
@@ -489,7 +511,7 @@
 		border-radius: 15px;
 		color: white;
 		padding: 10px;
-		background-color: #2563eb;
+		background-color: rgba(37, 99, 235, 0.8);
 		width: 150px;
 		border: none;
 		cursor: pointer;
