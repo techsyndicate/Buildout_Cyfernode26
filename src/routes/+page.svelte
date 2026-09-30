@@ -41,11 +41,6 @@
 			console.log(err);
 		}
 	}
-
-	async function logout() {
-		await signOut(auth);
-		goto('/');
-	}
 </script>
 
 <div class="min-h-screen bg-white">

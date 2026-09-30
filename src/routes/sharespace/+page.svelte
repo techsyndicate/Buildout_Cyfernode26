@@ -25,30 +25,6 @@
 	let propertySize = $state('');
 	let hours = $state('');
 
-	const fakeProperties = [
-		{
-			id: 'fake-1',
-			type: 'Office',
-			size: 20,
-			ownerEmail: 'contact@techsyndicate.us',
-			image: '/office.jpg'
-		},
-		{
-			id: 'fake-2',
-			type: 'Kitchen',
-			size: 6,
-			ownerEmail: 'shashwat@mail.com',
-			image: '/kitchen.jpg'
-		},
-		{
-			id: 'fake-3',
-			type: 'Pool',
-			size: 12,
-			ownerEmail: 'manik@mail.com',
-			image: '/pool.jpg'
-		}
-	];
-
 	let propertyImage = $state<File | null>(null);
 	let uploading = $state(false);
 
@@ -114,7 +90,7 @@
 			query(collection(db, 'properties'), orderBy('createdAt', 'desc'))
 		);
 
-		const allProperties = snapshot.docs.map((doc) => ({
+		properties = snapshot.docs.map((doc) => ({
 			id: doc.id,
 			...doc.data()
 		}));
@@ -171,7 +147,6 @@
 			await loadProperties();
 		} catch (error) {
 			console.error(error);
-			alert('Failed to upload image');
 		} finally {
 			uploading = false;
 		}
