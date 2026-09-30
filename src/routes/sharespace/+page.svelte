@@ -3,19 +3,26 @@
 	import { auth, db } from '$lib/firebase';
 	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import { goto } from '$app/navigation';
-	import { collection, addDoc, getDocs, query, orderBy, serverTimestamp } from 'firebase/firestore';
+	import {
+		collection,
+		addDoc,
+		getDocs,
+		query,
+		orderBy,
+		serverTimestamp,
+		deleteDoc,
+		doc
+	} from 'firebase/firestore';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
 	let links = $state([]);
 	let properties = $state([]);
 	let showRentModal = $state(false);
-	let showPayModal = $state(false);
 	let selectedProperty = $state<any>(null);
 	let propertyType = $state('Office');
 	let propertySize = $state('');
 	let hours = $state('');
-	let amount = $derived(Number(hours || 0) * 50);
 
 	const fakeProperties = [
 		{
@@ -54,21 +61,52 @@
 	}
 
 	function openProperty(property: any) {
-		if (property.ownerId === auth.currentUser?.uid) return;
-
 		selectedProperty = property;
 		hours = '';
-		showPayModal = true;
 	}
 
-	function closePayModal() {
-		showPayModal = false;
+	function closeProperty() {
 		selectedProperty = null;
 		hours = '';
 	}
 
-	function pay() {
-		if (!hours) return;
+	let billablehours = $derived(
+		selectedProperty && hours ? Number(hours) * (selectedProperty.size > 10 ? 2 : 1) : 0
+	);
+
+	let amount = $derived(billablehours * 50);
+
+	async function pay() {
+		if (!hours || !selectedProperty) return;
+
+		const response = await fetch('/api/stripe-checkout-sharespace', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				propertyId: selectedProperty.id,
+				propertyType: selectedProperty.type,
+				hours: billablehours
+			})
+		});
+
+		const data = await response.json();
+
+		if (data.url) {
+			window.location.href = data.url;
+		}
+	}
+
+	async function removeProperty() {
+		if (!selectedProperty) return;
+
+		const user = auth.currentUser;
+
+		if (!user || selectedProperty.ownerId !== user.uid) return;
+
+		await deleteDoc(doc(db, 'properties', selectedProperty.id));
+
+		selectedProperty = null;
+		await loadProperties();
 	}
 
 	async function loadProperties() {
@@ -229,7 +267,12 @@
 
 								<div class="space-y-1 text-sm text-zinc-600">
 									<p class="font-semibold text-zinc-950">{property.type}</p>
-									<p>{property.size} PEOPLE</p>
+
+									<p>
+										{property.size}
+										{property.size > 1 ? ' People' : ' Person'}
+									</p>
+
 									<p class="text-xs text-zinc-400">{property.ownerEmail}</p>
 								</div>
 							</div>
@@ -324,14 +367,14 @@
 		</div>
 	{/if}
 
-	{#if showPayModal && selectedProperty}
+	{#if selectedProperty}
 		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
 			<div
 				class="relative w-full max-w-md rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
 			>
 				<button
 					type="button"
-					onclick={closePayModal}
+					onclick={closeProperty}
 					class="absolute top-4 right-5 text-2xl leading-none text-zinc-400 transition hover:text-zinc-900"
 				>
 					×
@@ -345,31 +388,57 @@
 					/>
 
 					<div>
-						<h1 class="text-2xl font-semibold text-zinc-950">{selectedProperty.type}</h1>
-						<p class="mt-1 text-sm text-zinc-500">{selectedProperty.ownerEmail}</p>
+						<h1 class="text-2xl font-semibold text-zinc-950">
+							{selectedProperty.type}
+						</h1>
+
+						<p class="mt-1 text-sm text-zinc-500">
+							{selectedProperty.ownerEmail}
+						</p>
+
+						<p class="mt-1 text-sm text-zinc-500">
+							{selectedProperty.size}
+							{selectedProperty.size > 1 ? ' People' : ' Person'}
+						</p>
 					</div>
 				</div>
 
-				<div class="mt-7">
-					<label class="mb-2 block text-sm font-medium text-zinc-700">How many hours?</label>
+				{#if selectedProperty.ownerId === auth.currentUser?.uid}
+					<div class="mt-7">
+						<p class="text-sm text-zinc-500">
+							This is your property. Taking it off the market will remove it from shareSpace.
+						</p>
 
-					<input
-						type="number"
-						min="1"
-						step="1"
-						placeholder="2"
-						bind:value={hours}
-						class="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
-					/>
-				</div>
+						<button
+							type="button"
+							onclick={removeProperty}
+							class="mt-5 w-full rounded-xl bg-red-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-600"
+						>
+							Take off market
+						</button>
+					</div>
+				{:else}
+					<div class="mt-7">
+						<label class="mb-2 block text-sm font-medium text-zinc-700"> How many hours? </label>
 
-				<button
-					type="button"
-					onclick={pay}
-					class="mt-5 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
-				>
-					Pay ₹{amount}
-				</button>
+						<input
+							type="number"
+							min="1"
+							step="1"
+							placeholder="2"
+							bind:value={hours}
+							class="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+						/>
+					</div>
+
+					<button
+						type="button"
+						onclick={pay}
+						class="mt-5 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+					>
+						Pay ₹{amount}
+					</button>
+				{/if}
 			</div>
 		</div>
 	{/if}
