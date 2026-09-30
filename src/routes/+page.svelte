@@ -73,7 +73,11 @@
 				/>
 			</div>
 
-			<span class="relative z-10 text-xl font-bold text-white">tenantApp</span>
+			<span class="whitespace-nowrap text-white">
+				<span class="text-2xl font-light italic">tenant</span><span class="text-2xl font-semibold"
+					>App</span
+				>
+			</span>
 
 			<div class="relative z-10 hidden gap-6 text-sm text-zinc-300 md:flex">
 				<a href="#features" class="hover:text-white">Features</a>
@@ -112,7 +116,11 @@
 		</div>
 
 		<header class="relative z-10 -mt-3 -ml-2 flex items-center justify-between">
-			<span class="text-2xl font-bold text-white">tenantApp</span>
+			<span class="whitespace-nowrap text-white">
+				<span class="text-2xl font-light italic">tenant</span><span class="text-2xl font-semibold"
+					>App</span
+				>
+			</span>
 			<nav class="hidden gap-6 text-sm text-zinc-300 md:flex">
 				<a href="#features" class="hover:text-white">Features</a>
 				<a href="#testimonials" class="hover:text-white">Testimonials</a>
@@ -121,8 +129,12 @@
 		</header>
 
 		<main class="relative z-10 my-auto flex flex-col items-center text-center">
-			<h1 class="text-4xl font-extrabold text-white md:text-6xl">tenantApp</h1>
-			<p class="mt-4 text-lg text-zinc-100 md:text-xl">
+			<span class="whitespace-nowrap text-white">
+				<span class="text-5xl font-light italic">tenant</span><span class="text-5xl font-semibold"
+					>App</span
+				>
+			</span>
+			<p class="mt-4 text-xl text-zinc-100 md:text-xl">
 				Your all-in-one solution for managing tenant relationships
 			</p>
 
@@ -152,7 +164,7 @@
 
 	<div class="px-6 py-16">
 		<section id="features" class="mx-auto mb-20 max-w-5xl">
-			<h2 class="mb-10 text-center text-2xl font-bold md:text-3xl">Features</h2>
+			<h2 class="mb-10 text-center text-4xl font-bold md:text-3xl">Features</h2>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 				<div class="rounded-xl border border-zinc-200 bg-zinc-50 p-6">
 					<h3 class="text-xl font-bold">Chat with Tenants</h3>
@@ -179,7 +191,7 @@
 		</section>
 
 		<section id="testimonials" class="mx-auto max-w-5xl">
-			<h2 class="mb-10 text-center text-2xl font-bold md:text-3xl">Testimonials</h2>
+			<h2 class="mb-10 text-center text-4xl font-bold md:text-3xl">Testimonials</h2>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<div class="flex flex-col justify-between rounded-xl border border-zinc-200 bg-zinc-50 p-6">
 					<div>
