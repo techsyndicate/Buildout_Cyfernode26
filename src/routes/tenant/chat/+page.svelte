@@ -198,7 +198,11 @@
 			<div
 				class="rounded-2xl border border-white/30 bg-white/20 p-7 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
 			>
-				<h1 class="text-3xl font-bold text-zinc-950">Chat</h1>
+				<h1 class="text-3xl tracking-tight text-zinc-950">
+					<span class="font-light italic">Chat</span>
+					<span>with your</span>
+					<span class="font-semibold">landlord</span>
+				</h1>
 
 				<p class="mt-2 text-sm text-zinc-700">Create a chat or join one using a code.</p>
 
