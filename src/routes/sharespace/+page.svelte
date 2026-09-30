@@ -48,13 +48,8 @@
 		}
 	];
 
-	const propertyImages = {
-		Office: '/office.jpg',
-		Kitchen: '/kitchen.jpg',
-		Garage: '/garage.jpg',
-		Terrace: '/terrace.png',
-		Pool: '/pool.jpg'
-	};
+	let propertyImage = $state<File | null>(null);
+	let uploading = $state(false);
 
 	function rent() {
 		showRentModal = true;
@@ -134,27 +129,51 @@
 	}
 
 	async function submitRent() {
-		if (!propertySize) return;
+		if (!propertySize || !propertyImage) return;
 
 		const user = auth.currentUser;
 
 		if (!user) return;
 
-		await addDoc(collection(db, 'properties'), {
-			type: propertyType,
-			size: Number(propertySize),
-			ownerId: user.uid,
-			ownerEmail: user.email,
-			ownerName: user.displayName ?? 'User',
-			image: propertyImages[propertyType as keyof typeof propertyImages],
-			createdAt: serverTimestamp()
-		});
+		uploading = true;
 
-		propertySize = '';
-		propertyType = 'Office';
-		showRentModal = false;
+		try {
+			const formData = new FormData();
+			formData.append('image', propertyImage);
 
-		await loadProperties();
+			const uploadResponse = await fetch('/api/upload-image', {
+				method: 'POST',
+				body: formData
+			});
+
+			const uploadData = await uploadResponse.json();
+
+			if (!uploadResponse.ok || !uploadData.url) {
+				throw new Error(uploadData.error ?? 'Image upload failed');
+			}
+
+			await addDoc(collection(db, 'properties'), {
+				type: propertyType,
+				size: Number(propertySize),
+				ownerId: user.uid,
+				ownerEmail: user.email,
+				ownerName: user.displayName ?? 'User',
+				image: uploadData.url,
+				createdAt: serverTimestamp()
+			});
+
+			propertySize = '';
+			propertyType = 'Office';
+			propertyImage = null;
+			showRentModal = false;
+
+			await loadProperties();
+		} catch (error) {
+			console.error(error);
+			alert('Failed to upload image');
+		} finally {
+			uploading = false;
+		}
 	}
 
 	async function logout() {
@@ -355,12 +374,33 @@
 						</div>
 					</div>
 
+					<div>
+						<label class="mb-2 block text-sm font-medium text-zinc-700"> Property image </label>
+
+						<input
+							type="file"
+							accept="image/*"
+							onchange={(e) => {
+								const input = e.currentTarget as HTMLInputElement;
+								propertyImage = input.files?.[0] ?? null;
+							}}
+							class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm"
+						/>
+
+						{#if propertyImage}
+							<p class="mt-2 truncate text-xs text-zinc-400">
+								{propertyImage.name}
+							</p>
+						{/if}
+					</div>
+
 					<button
 						type="button"
 						onclick={submitRent}
-						class="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+						disabled={uploading || !propertyImage || !propertySize}
+						class="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						Submit
+						{uploading ? 'Uploading...' : 'Submit'}
 					</button>
 				</div>
 			</div>

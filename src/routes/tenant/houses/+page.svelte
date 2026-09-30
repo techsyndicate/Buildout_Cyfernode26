@@ -48,11 +48,12 @@
 	async function pay() {
 		if (!selectedHouse || !months) return;
 
-		const selectedmonths = Number(months);
+		const selectedMonths = Number(months);
 
-		if (selectedmonths < 1) return;
+		if (selectedMonths < 1) return;
 
-		if (selectedmonths > Number(selectedHouse.maxmonths)) {
+		if (selectedMonths > Number(selectedHouse.maxmonths)) {
+			alert(`You can only rent this house for ${selectedHouse.maxmonths} months.`);
 			return;
 		}
 
@@ -64,8 +65,8 @@
 			body: JSON.stringify({
 				houseId: selectedHouse.id,
 				houseType: selectedHouse.type,
-				months: selectedmonths,
-				amount: amount
+				months: selectedMonths,
+				amount
 			})
 		});
 
@@ -74,6 +75,13 @@
 		if (data.url) {
 			window.location.href = data.url;
 		}
+	}
+
+	async function logout() {
+		document.cookie = 'tenant=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+		await signOut(auth);
+		goto('/');
 	}
 
 	onMount(() => {
@@ -100,12 +108,6 @@
 
 		return unsubscribe;
 	});
-
-	async function logout() {
-		document.cookie = 'tenant=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-		await signOut(auth);
-		goto('/');
-	}
 </script>
 
 <div
@@ -206,7 +208,9 @@
 	</main>
 
 	{#if showRentModal && selectedHouse}
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+		<div
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+		>
 			<div
 				class="relative w-full max-w-md rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
 			>
@@ -233,6 +237,10 @@
 						<p class="mt-1 text-sm text-zinc-500">
 							{selectedHouse.location}
 						</p>
+
+						<p class="mt-1 text-sm text-zinc-500">
+							{selectedHouse.bedrooms} bedrooms
+						</p>
 					</div>
 				</div>
 
@@ -255,10 +263,19 @@
 					/>
 				</div>
 
+				<div class="mt-5 rounded-xl bg-zinc-50 p-4">
+					<div class="flex items-center justify-between">
+						<span class="text-sm text-zinc-500">Total</span>
+						<span class="text-lg font-semibold text-zinc-950">
+							₹{amount}
+						</span>
+					</div>
+				</div>
+
 				<button
 					type="button"
 					onclick={pay}
-					class="mt-5 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+					class="mt-5 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
 				>
 					Pay ₹{amount}
 				</button>

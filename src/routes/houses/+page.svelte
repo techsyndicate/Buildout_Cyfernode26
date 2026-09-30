@@ -27,46 +27,8 @@
 	let location = $state('');
 	let bedrooms = $state('');
 	let rent = $state('');
-
-	const houseImages = {
-		Apartment: '/house.png',
-		House: '/house.png',
-		Villa: '/house.png'
-	};
-
-	onMount(() => {
-		const cookies = document.cookie.split('; ');
-		const tenantCookie = cookies.find((row) => row.startsWith('tenant='));
-		const isTenant = tenantCookie?.split('=')[1] === 'true';
-
-		tenant = isTenant;
-
-		links = isTenant
-			? [
-					{ label: 'Home', href: '/tenant/home' },
-					{ label: 'Chat', href: '/tenant/chat' },
-					{ label: 'shareSpace', href: '/sharespace' },
-					{ label: 'Landlords', href: '/tenant/landlords' },
-					{ label: 'Houses', href: '/tenant/houses' }
-				]
-			: [
-					{ label: 'Home', href: '/home' },
-					{ label: 'Chat', href: '/chat' },
-					{ label: 'shareSpace', href: '/sharespace' },
-					{ label: 'Tenants', href: '/tenants' },
-					{ label: 'Houses', href: '/houses' }
-				];
-
-		onAuthStateChanged(auth, async (user) => {
-			if (!user) {
-				goto('/');
-				return;
-			}
-
-			name = user.displayName ?? 'User';
-			await loadHouses();
-		});
-	});
+	let houseImage = $state<File | null>(null);
+	let uploading = $state(false);
 
 	async function loadHouses() {
 		const user = auth.currentUser;
@@ -91,6 +53,16 @@
 		selectedHouse = null;
 	}
 
+	function openHouseForm() {
+		selectedHouse = null;
+		houseType = 'Apartment';
+		location = '';
+		bedrooms = '';
+		rent = '';
+		houseImage = null;
+		showHouseModal = true;
+	}
+
 	async function removeHouse() {
 		if (!selectedHouse) return;
 
@@ -106,49 +78,100 @@
 		await loadHouses();
 	}
 
-	function openHouseForm() {
-		showHouseModal = false;
-		selectedHouse = null;
-		houseType = 'Apartment';
-		location = '';
-		bedrooms = '';
-		rent = '';
-		showHouseModal = false;
-	}
-
 	async function submitHouse() {
-		if (!location || !bedrooms || !rent) return;
+		if (!location || !bedrooms || !rent || !houseImage) return;
 
 		const user = auth.currentUser;
 
 		if (!user) return;
 
-		await addDoc(collection(db, 'houses'), {
-			type: houseType,
-			location: location,
-			bedrooms: Number(bedrooms),
-			rent: Number(rent),
-			ownerId: user.uid,
-			ownerEmail: user.email,
-			ownerName: user.displayName ?? 'User',
-			image: houseImages[houseType as keyof typeof houseImages],
-			createdAt: serverTimestamp()
-		});
+		uploading = true;
 
-		houseType = 'Apartment';
-		location = '';
-		bedrooms = '';
-		rent = '';
-		showHouseModal = false;
+		try {
+			const formData = new FormData();
+			formData.append('image', houseImage);
 
-		await loadHouses();
+			const uploadResponse = await fetch('/api/upload-image', {
+				method: 'POST',
+				body: formData
+			});
+
+			const uploadData = await uploadResponse.json();
+
+			if (!uploadResponse.ok || !uploadData.url) {
+				throw new Error(uploadData.error ?? 'Image upload failed');
+			}
+
+			await addDoc(collection(db, 'houses'), {
+				type: houseType,
+				location,
+				bedrooms: Number(bedrooms),
+				rent: Number(rent),
+				ownerId: user.uid,
+				ownerEmail: user.email,
+				ownerName: user.displayName ?? 'User',
+				image: uploadData.url,
+				createdAt: serverTimestamp()
+			});
+
+			houseType = 'Apartment';
+			location = '';
+			bedrooms = '';
+			rent = '';
+			houseImage = null;
+			showHouseModal = false;
+
+			await loadHouses();
+		} catch (error) {
+			console.error(error);
+			alert('Failed to upload image');
+		} finally {
+			uploading = false;
+		}
 	}
 
 	async function logout() {
 		document.cookie = 'tenant=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
 		await signOut(auth);
 		goto('/');
 	}
+
+	onMount(() => {
+		const cookies = document.cookie.split('; ');
+		const tenantCookie = cookies.find((row) => row.startsWith('tenant='));
+
+		tenant = tenantCookie?.split('=')[1] === 'true';
+
+		links = tenant
+			? [
+					{ label: 'Home', href: '/tenant/home' },
+					{ label: 'Chat', href: '/tenant/chat' },
+					{ label: 'shareSpace', href: '/sharespace' },
+					{ label: 'Landlords', href: '/tenant/landlords' },
+					{ label: 'Houses', href: '/tenant/houses' }
+				]
+			: [
+					{ label: 'Home', href: '/home' },
+					{ label: 'Chat', href: '/chat' },
+					{ label: 'shareSpace', href: '/sharespace' },
+					{ label: 'Tenants', href: '/tenants' },
+					{ label: 'Houses', href: '/houses' }
+				];
+
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
+			if (!user) {
+				goto('/');
+				return;
+			}
+
+			name = user.displayName ?? 'User';
+
+			await loadHouses();
+		});
+
+		return unsubscribe;
+	});
 </script>
 
 <div
@@ -262,8 +285,10 @@
 		</div>
 	</main>
 
-	{#if showHouseModal && selectedHouse}
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+	{#if showHouseModal}
+		<div
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+		>
 			<div
 				class="relative w-full max-w-md rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
 			>
@@ -275,113 +300,122 @@
 					×
 				</button>
 
-				<img src={selectedHouse.image} alt="House" class="h-40 w-full rounded-2xl object-cover" />
+				{#if selectedHouse}
+					<img src={selectedHouse.image} alt="House" class="h-40 w-full rounded-2xl object-cover" />
 
-				<h1 class="mt-5 text-2xl font-semibold text-zinc-950">
-					{selectedHouse.type}
-				</h1>
+					<h1 class="mt-5 text-2xl font-semibold text-zinc-950">
+						{selectedHouse.type}
+					</h1>
 
-				<div class="mt-3 space-y-1 text-sm text-zinc-500">
-					<p>{selectedHouse.location}</p>
-					<p>{selectedHouse.bedrooms} bedrooms</p>
-					<p>₹{selectedHouse.rent}/month</p>
-				</div>
+					<div class="mt-3 space-y-1 text-sm text-zinc-500">
+						<p>{selectedHouse.location}</p>
+						<p>{selectedHouse.bedrooms} bedrooms</p>
+						<p>₹{selectedHouse.rent}/month</p>
+					</div>
 
-				{#if selectedHouse.ownerId === auth.currentUser?.uid}
-					<button
-						type="button"
-						onclick={removeHouse}
-						class="mt-6 w-full rounded-xl bg-red-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-600"
-					>
-						Take off market
-					</button>
-				{:else}
-					<p class="mt-6 text-center text-sm text-zinc-400">
-						This property belongs to another landlord.
-					</p>
-				{/if}
-			</div>
-		</div>
-	{/if}
-
-	{#if showHouseModal && !selectedHouse}
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-			<div
-				class="relative w-full max-w-md rounded-3xl bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.2)]"
-			>
-				<button
-					type="button"
-					onclick={() => (showHouseModal = false)}
-					class="absolute top-4 right-5 text-2xl leading-none text-zinc-400 transition hover:text-zinc-900"
-				>
-					×
-				</button>
-
-				<h1 class="text-2xl font-semibold text-zinc-950">List a house</h1>
-
-				<div class="mt-6 space-y-5">
-					<div>
-						<label class="mb-2 block text-sm font-medium text-zinc-700">Type</label>
-
-						<select
-							bind:value={houseType}
-							class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500"
+					{#if selectedHouse.ownerId === auth.currentUser?.uid}
+						<button
+							type="button"
+							onclick={removeHouse}
+							class="mt-6 w-full rounded-xl bg-red-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-600"
 						>
-							<option value="Apartment">Apartment</option>
-							<option value="House">House</option>
-							<option value="Villa">Villa</option>
-						</select>
-					</div>
+							Take off market
+						</button>
+					{:else}
+						<p class="mt-6 text-center text-sm text-zinc-400">
+							This property belongs to another landlord.
+						</p>
+					{/if}
+				{:else}
+					<h1 class="text-2xl font-semibold text-zinc-950">List a house</h1>
 
-					<div>
-						<label class="mb-2 block text-sm font-medium text-zinc-700">Location</label>
+					<div class="mt-6 space-y-5">
+						<div>
+							<label class="mb-2 block text-sm font-medium text-zinc-700"> Type </label>
 
-						<input
-							type="text"
-							placeholder="Sector 46, Gurugram"
-							bind:value={location}
-							class="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
-						/>
-					</div>
+							<select
+								bind:value={houseType}
+								class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500"
+							>
+								<option value="Apartment">Apartment</option>
+								<option value="House">House</option>
+								<option value="Villa">Villa</option>
+							</select>
+						</div>
 
-					<div class="flex gap-4">
-						<div class="flex-1">
-							<label class="mb-2 block text-sm font-medium text-zinc-700">Bedrooms</label>
+						<div>
+							<label class="mb-2 block text-sm font-medium text-zinc-700"> Location </label>
 
 							<input
-								type="number"
-								min="1"
-								bind:value={bedrooms}
-								placeholder="2"
+								type="text"
+								placeholder="Sector 46, Gurugram"
+								bind:value={location}
 								class="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
 							/>
 						</div>
 
-						<div class="flex-1">
-							<label class="mb-2 block text-sm font-medium text-zinc-700">Rent</label>
-
-							<div class="flex items-center gap-2">
-								<span class="text-sm text-zinc-500">₹</span>
+						<div class="flex gap-4">
+							<div class="flex-1">
+								<label class="mb-2 block text-sm font-medium text-zinc-700"> Bedrooms </label>
 
 								<input
 									type="number"
 									min="1"
-									bind:value={rent}
-									placeholder="25000"
+									step="1"
+									placeholder="2"
+									bind:value={bedrooms}
 									class="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
 								/>
 							</div>
-						</div>
-					</div>
 
-					<button
-						type="button"
-						onclick={submitHouse}
-						class="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
-					>
-						List house
-					</button>
-				</div>
+							<div class="flex-1">
+								<label class="mb-2 block text-sm font-medium text-zinc-700"> Rent </label>
+
+								<div class="flex items-center gap-2">
+									<span class="text-sm text-zinc-500">₹</span>
+
+									<input
+										type="number"
+										min="1"
+										step="1"
+										placeholder="25000"
+										bind:value={rent}
+										class="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+									/>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<label class="mb-2 block text-sm font-medium text-zinc-700"> House image </label>
+
+							<input
+								type="file"
+								accept="image/*"
+								onchange={(e) => {
+									const input = e.currentTarget as HTMLInputElement;
+									houseImage = input.files?.[0] ?? null;
+								}}
+								class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm"
+							/>
+
+							{#if houseImage}
+								<p class="mt-2 truncate text-xs text-zinc-400">
+									{houseImage.name}
+								</p>
+							{/if}
+						</div>
+
+						<button
+							type="button"
+							onclick={submitHouse}
+							disabled={uploading || !location || !bedrooms || !rent || !houseImage}
+							class="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							{uploading ? 'Uploading...' : 'List house'}
+						</button>
+					</div>
+				{/if}
 			</div>
 		</div>
 	{/if}
