@@ -13,7 +13,7 @@
 		deleteDoc,
 		doc
 	} from 'firebase/firestore';
-	import DarkVeil from '$lib/components/Darkveil.svelte';
+	import DarkVeil from '$lib/components/DarkVeil.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);

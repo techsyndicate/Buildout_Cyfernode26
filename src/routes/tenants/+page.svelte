@@ -14,7 +14,7 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
-	import DarkVeil from '$lib/components/Darkveil.svelte';
+	import DarkVeil from '$lib/components/DarkVeil.svelte';
 
 	let loading = $state(true);
 	let tenantSpaces = $state<any[]>([]);

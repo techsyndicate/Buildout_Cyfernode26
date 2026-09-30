@@ -3,7 +3,7 @@
 	import { auth } from '$lib/firebase';
 	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import { goto } from '$app/navigation';
-	import DarkVeil from '$lib/components/Darkveil.svelte';
+	import DarkVeil from '$lib/components/DarkVeil.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);

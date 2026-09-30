@@ -4,7 +4,7 @@
 	import { page } from '$app/state';
 	import { db } from '$lib/firebase';
 	import { deleteDoc, doc } from 'firebase/firestore';
-	import DarkVeil from '$lib/components/Darkveil.svelte';
+	import DarkVeil from '$lib/components/DarkVeil.svelte';
 
 	let deleting = $state(true);
 

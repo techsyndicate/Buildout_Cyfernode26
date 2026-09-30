@@ -13,7 +13,7 @@
 		deleteDoc,
 		doc
 	} from 'firebase/firestore';
-	import DarkVeil from '$lib/components/Darkveil.svelte';
+	import DarkVeil from '$lib/components/DarkVeil.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -255,9 +255,7 @@
 					<span class="font-medium">share</span><span class="font-light italic">Space</span>
 				</h1>
 
-				<p class="mt-2 text-sm text-zinc-800">
-					Find somewhere useful. Rent somewhere you don't.
-				</p>
+				<p class="mt-2 text-sm text-zinc-800">Find somewhere useful. Rent somewhere you don't.</p>
 
 				<div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
 					{#each properties as property}
@@ -296,13 +294,9 @@
 							have some space?
 						</p>
 
-						<p class="mt-1 text-lg font-medium text-zinc-950">
-							Let someone make use of it.
-						</p>
+						<p class="mt-1 text-lg font-medium text-zinc-950">Let someone make use of it.</p>
 
-						<p class="mt-1 text-sm text-zinc-700">
-							List an office, kitchen, garage or pool.
-						</p>
+						<p class="mt-1 text-sm text-zinc-700">List an office, kitchen, garage or pool.</p>
 					</div>
 
 					<div class="flex items-center gap-8">
@@ -319,7 +313,9 @@
 	</main>
 
 	{#if showRentModal}
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+		<div
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+		>
 			<div
 				class="relative w-full max-w-md rounded-3xl border border-white/40 bg-white/35 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.25)] backdrop-blur-xl"
 			>
@@ -340,7 +336,7 @@
 
 							<select
 								bind:value={propertyType}
-								class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 outline-none backdrop-blur-md focus:border-blue-500"
+								class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 backdrop-blur-md outline-none focus:border-blue-500"
 							>
 								<option value="Office">Office</option>
 								<option value="Kitchen">Kitchen</option>
@@ -359,7 +355,7 @@
 									step="1"
 									placeholder="10"
 									bind:value={propertySize}
-									class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 outline-none backdrop-blur-md focus:border-blue-500"
+									class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 backdrop-blur-md outline-none focus:border-blue-500"
 								/>
 
 								<span class="text-sm whitespace-nowrap text-zinc-700">people</span>
@@ -368,9 +364,7 @@
 					</div>
 
 					<div>
-						<label class="mb-2 block text-sm font-medium text-zinc-800">
-							Property image
-						</label>
+						<label class="mb-2 block text-sm font-medium text-zinc-800"> Property image </label>
 
 						<input
 							type="file"
@@ -403,7 +397,9 @@
 	{/if}
 
 	{#if selectedProperty}
-		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+		<div
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+		>
 			<div
 				class="relative w-full max-w-md rounded-3xl border border-white/40 bg-white/35 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.25)] backdrop-blur-xl"
 			>
@@ -454,9 +450,7 @@
 					</div>
 				{:else}
 					<div class="mt-7">
-						<label class="mb-2 block text-sm font-medium text-zinc-800">
-							How many hours?
-						</label>
+						<label class="mb-2 block text-sm font-medium text-zinc-800"> How many hours? </label>
 
 						<input
 							type="number"
@@ -464,7 +458,7 @@
 							step="1"
 							placeholder="2"
 							bind:value={hours}
-							class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 outline-none backdrop-blur-md focus:border-blue-500"
+							class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 backdrop-blur-md outline-none focus:border-blue-500"
 						/>
 					</div>
 
