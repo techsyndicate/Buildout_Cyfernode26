@@ -85,12 +85,23 @@
 				<a href="#contact" class="hover:text-white">Contact</a>
 			</div>
 
-			<button
-				onclick={handleLogin}
-				class="relative z-10 rounded-lg bg-white px-4 py-2 text-xs font-semibold text-black hover:bg-zinc-200"
-			>
-				Login with Google
-			</button>
+			<div class="relative z-10 flex items-center gap-3">
+				<button
+					onclick={handleLogin}
+					class="rounded-lg bg-white px-4 py-2 text-xs font-semibold text-black hover:bg-zinc-200"
+				>
+					Login with Google
+				</button>
+
+				<span class="text-sm font-bold text-white italic">OR</span>
+
+				<button
+					onclick={handleTenantLogin}
+					class="rounded-lg bg-white px-4 py-2 text-xs font-semibold text-black hover:bg-zinc-200"
+				>
+					Tenant Login
+				</button>
+			</div>
 		</div>
 	</div>
 
