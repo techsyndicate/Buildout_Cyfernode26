@@ -14,7 +14,7 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
-	import DarkVeil from '$lib/components/DarkVeil.svelte';
+	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let loading = $state(true);
 	let tenantSpaces = $state<any[]>([]);
@@ -134,15 +134,9 @@
 
 <div class="relative flex h-screen w-full overflow-hidden bg-black text-zinc-900">
 	<div class="fixed inset-0 z-0 h-full w-full">
-		<DarkVeil
-			hueShift={0}
-			noiseIntensity={0}
-			scanlineIntensity={0}
-			speed={0.5}
-			scanlineFrequency={0}
-			warpAmount={0}
-			resolutionScale={1}
-		/>
+		<div style="width: 100%; height: 100%; position: relative;">
+			<Grainient color1="#09416c" color2="#b8b8b8" color3="#507750" />
+		</div>
 	</div>
 
 	<div
@@ -198,18 +192,14 @@
 						<span class="font-semibold">tenants</span>
 					</h1>
 
-					<p class="text-sm text-zinc-700">
-						Manage your properties and connect with tenants.
-					</p>
+					<p class="text-sm text-zinc-700">Manage your properties and connect with tenants.</p>
 				</div>
 
 				<div class="mt-8">
 					<div
 						class="rounded-2xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
 					>
-						<h2 class="mt-2 text-base font-semibold text-zinc-950">
-							Create a property space
-						</h2>
+						<h2 class="mt-2 text-base font-semibold text-zinc-950">Create a property space</h2>
 
 						<p class="mt-1 text-sm text-zinc-700">
 							Generate an invite code to share with your tenant.
@@ -227,9 +217,7 @@
 							<div
 								class="mt-6 rounded-xl border border-white/30 bg-white/20 p-4 text-center shadow-inner backdrop-blur-lg"
 							>
-								<span class="text-xs text-zinc-600">
-									Your Invite Code
-								</span>
+								<span class="text-xs text-zinc-600"> Your Invite Code </span>
 
 								<p class="mt-1 text-2xl font-bold tracking-widest text-zinc-950">
 									{newCode}
@@ -246,14 +234,10 @@
 				</div>
 
 				<div class="mt-12">
-					<h2 class="text-base font-semibold text-zinc-950">
-						Your Properties
-					</h2>
+					<h2 class="text-base font-semibold text-zinc-950">Your Properties</h2>
 
 					{#if loading}
-						<p class="mt-4 text-sm text-zinc-700">
-							Loading spaces...
-						</p>
+						<p class="mt-4 text-sm text-zinc-700">Loading spaces...</p>
 					{:else if tenantSpaces.length === 0}
 						<div
 							class="mt-4 rounded-2xl border border-white/40 bg-white/20 p-5 text-sm text-zinc-700 backdrop-blur-lg"
@@ -268,9 +252,7 @@
 									class="flex items-center justify-between rounded-2xl border border-white/40 bg-white/35 p-5 text-left shadow-[0_6px_20px_rgba(0,0,0,0.10)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_25px_rgba(0,0,0,0.15)]"
 								>
 									<div>
-										<span class="font-medium text-zinc-950">
-											Tenant Space
-										</span>
+										<span class="font-medium text-zinc-950"> Tenant Space </span>
 
 										<p class="mt-1 text-xs text-zinc-600">
 											Code: {tenant.code}

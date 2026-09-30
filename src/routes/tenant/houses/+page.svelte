@@ -4,6 +4,7 @@
 	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -110,15 +111,20 @@
 	});
 </script>
 
-<div
-	class="flex h-screen w-full overflow-hidden bg-cover bg-fixed bg-center text-black"
-	style="background-image: url('/xyz.png');"
->
+<div class="relative flex h-screen w-full overflow-hidden text-black">
+	<div class="fixed inset-0 z-0 h-full w-full">
+		<div class="relative h-full w-full">
+			<Grainient color1="#40981b" color2="#f53100" color3="#0091ff" />
+		</div>
+	</div>
+
 	<div
-		class={`shrink-0 overflow-hidden transition-all duration-300 ${sidebarOpen ? 'w-55' : 'w-0'}`}
+		class={`relative z-10 shrink-0 overflow-hidden transition-all duration-300 ${
+			sidebarOpen ? 'w-55' : 'w-0'
+		}`}
 	>
 		<div
-			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-zinc-200/80 bg-white/95 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)] backdrop-blur-sm"
+			class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-white/40 bg-white/35 p-2 shadow-[0_8px_30px_rgba(0,0,0,0.10)] backdrop-blur-xl"
 		>
 			<div class="px-3 py-3">
 				<span class="text-lg font-bold text-zinc-900">
@@ -134,14 +140,14 @@
 						class={`w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
 							link.href === '/tenant/houses'
 								? 'bg-blue-600 text-white shadow-sm'
-								: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+								: 'text-zinc-600 hover:bg-white/40 hover:text-zinc-900'
 						}`}
 					>
 						{link.label}
 					</button>
 				{/each}
 
-				<hr class="border" />
+				<hr class="border-white/50" />
 
 				<button
 					type="button"
@@ -154,10 +160,10 @@
 		</div>
 	</div>
 
-	<main class="min-w-0 flex-1 overflow-y-auto">
+	<main class="relative z-10 min-w-0 flex-1 overflow-y-auto">
 		<div class="flex min-h-screen items-center justify-center p-8">
 			<div
-				class="min-h-[550px] w-full max-w-6xl rounded-[25px] bg-white/85 p-8 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm"
+				class="min-h-[550px] w-full max-w-6xl rounded-[25px] border border-white/40 bg-white/35 p-8 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl"
 			>
 				<h1 class="text-3xl tracking-tight text-zinc-950">
 					<span class="font-medium">Find</span>
@@ -171,7 +177,7 @@
 						<button
 							type="button"
 							onclick={() => openHouse(house)}
-							class="h-48 cursor-pointer rounded-2xl border border-zinc-200 bg-white p-6 text-left shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.10)]"
+							class="h-48 cursor-pointer rounded-2xl border border-white/50 bg-white/60 p-6 text-left shadow-[0_4px_15px_rgba(0,0,0,0.06)] transition duration-200 hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-[0_8px_25px_rgba(0,0,0,0.10)]"
 						>
 							<div class="flex h-full items-center gap-5">
 								<img
@@ -197,7 +203,7 @@
 						</button>
 					{:else}
 						<div
-							class="col-span-full rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-12 text-center"
+							class="col-span-full rounded-2xl border border-dashed border-white/60 bg-white/30 p-12 text-center backdrop-blur-sm"
 						>
 							<p class="text-sm text-zinc-500">No houses available right now.</p>
 						</div>

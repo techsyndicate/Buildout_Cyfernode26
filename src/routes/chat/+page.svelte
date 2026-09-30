@@ -14,7 +14,7 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
-	import DarkVeil from '$lib/components/DarkVeil.svelte';
+	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -146,15 +146,9 @@
 
 <div class="relative flex h-screen w-full overflow-hidden bg-black text-black">
 	<div class="fixed inset-0 z-0 h-full w-full">
-		<DarkVeil
-			hueShift={0}
-			noiseIntensity={0}
-			scanlineIntensity={0}
-			speed={0.5}
-			scanlineFrequency={0}
-			warpAmount={0}
-			resolutionScale={1}
-		/>
+		<div style="width: 100%; height: 100%; position: relative;">
+			<Grainient color1="#04ff00" color2="#0aadff" color3="#422361" />
+		</div>
 	</div>
 
 	<div
@@ -209,17 +203,13 @@
 					<span class="font-semibold">tenants</span>
 				</h1>
 
-				<p class="mt-2 text-zinc-800">
-					Create a chat or join one using a code.
-				</p>
+				<p class="mt-2 text-zinc-800">Create a chat or join one using a code.</p>
 
 				<div class="mt-8">
 					<div
 						class="rounded-3xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
 					>
-						<h2 class="mt-1 text-2xl font-bold text-zinc-950">
-							Create a new chat
-						</h2>
+						<h2 class="mt-1 text-2xl font-bold text-zinc-950">Create a new chat</h2>
 
 						<button
 							onclick={createChat}
@@ -232,9 +222,7 @@
 							<div
 								class="mt-5 rounded-2xl border border-white/30 bg-white/20 p-4 shadow-inner backdrop-blur-lg"
 							>
-								<p class="text-sm text-zinc-600">
-									Your chat code
-								</p>
+								<p class="text-sm text-zinc-600">Your chat code</p>
 
 								<p class="mt-1 text-3xl font-bold tracking-widest text-zinc-950">
 									{newCode}
@@ -255,14 +243,10 @@
 				</div>
 
 				<div class="mt-10">
-					<h2 class="text-xl font-bold text-zinc-950">
-						Your chats
-					</h2>
+					<h2 class="text-xl font-bold text-zinc-950">Your chats</h2>
 
 					{#if loading}
-						<p class="mt-4 text-zinc-700">
-							Loading...
-						</p>
+						<p class="mt-4 text-zinc-700">Loading...</p>
 					{:else if chats.length === 0}
 						<div
 							class="mt-4 rounded-2xl border border-white/40 bg-white/35 p-6 text-zinc-700 shadow-[0_6px_20px_rgba(0,0,0,0.10)] backdrop-blur-xl"
@@ -277,18 +261,14 @@
 									class="flex w-full items-center justify-between rounded-2xl border border-white/40 bg-white/35 p-5 text-left shadow-[0_6px_20px_rgba(0,0,0,0.10)] backdrop-blur-xl transition hover:bg-white/45 hover:shadow-[0_10px_25px_rgba(0,0,0,0.15)]"
 								>
 									<div>
-										<p class="font-semibold text-zinc-950">
-											Chat
-										</p>
+										<p class="font-semibold text-zinc-950">Chat</p>
 
 										<p class="mt-1 text-sm text-zinc-600">
 											Code: {chat.code}
 										</p>
 									</div>
 
-									<span class="text-zinc-600">
-										→
-									</span>
+									<span class="text-zinc-600"> → </span>
 								</button>
 							{/each}
 						</div>

@@ -13,7 +13,7 @@
 		deleteDoc,
 		doc
 	} from 'firebase/firestore';
-	import DarkVeil from '$lib/components/DarkVeil.svelte';
+	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -193,15 +193,9 @@
 
 <div class="relative flex h-screen w-full overflow-hidden bg-black text-black">
 	<div class="fixed inset-0 z-0 h-full w-full">
-		<DarkVeil
-			hueShift={0}
-			noiseIntensity={0}
-			scanlineIntensity={0}
-			speed={0.5}
-			scanlineFrequency={0}
-			warpAmount={0}
-			resolutionScale={1}
-		/>
+		<div style="width: 100%; height: 100%; position: relative;">
+			<Grainient color1="#ff0000" color2="#0aadff" color3="#635077" />
+		</div>
 	</div>
 
 	<div

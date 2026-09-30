@@ -13,7 +13,7 @@
 		deleteDoc,
 		doc
 	} from 'firebase/firestore';
-	import DarkVeil from '$lib/components/DarkVeil.svelte';
+	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -36,9 +36,7 @@
 
 		if (!user) return;
 
-		const snapshot = await getDocs(
-			query(collection(db, 'houses'), orderBy('createdAt', 'desc'))
-		);
+		const snapshot = await getDocs(query(collection(db, 'houses'), orderBy('createdAt', 'desc')));
 
 		houses = snapshot.docs.map((doc) => ({
 			id: doc.id,
@@ -179,15 +177,9 @@
 
 <div class="relative flex h-screen w-full overflow-hidden bg-black text-black">
 	<div class="fixed inset-0 z-0 h-full w-full">
-		<DarkVeil
-			hueShift={0}
-			noiseIntensity={0}
-			scanlineIntensity={0}
-			speed={0.5}
-			scanlineFrequency={0}
-			warpAmount={0}
-			resolutionScale={1}
-		/>
+		<div style="width: 100%; height: 100%; position: relative;">
+			<Grainient color1="#6d095f" color2="#a83838" color3="#ff0000" />
+		</div>
 	</div>
 
 	<div
@@ -244,9 +236,7 @@
 							<span class="font-light italic">Properties</span>
 						</h1>
 
-						<p class="mt-2 text-sm text-zinc-700">
-							Find a place to live or put yours up for rent.
-						</p>
+						<p class="mt-2 text-sm text-zinc-700">Find a place to live or put yours up for rent.</p>
 					</div>
 
 					{#if !tenant}
@@ -268,11 +258,7 @@
 							class="h-48 rounded-2xl border border-white/40 bg-white/35 p-6 text-left shadow-[0_4px_15px_rgba(0,0,0,0.12)] backdrop-blur-xl transition duration-200 hover:-translate-y-0.5 hover:bg-white/45 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)]"
 						>
 							<div class="flex h-full items-center gap-5">
-								<img
-									src={house.image}
-									alt="House"
-									class="h-20 w-20 rounded-[20px] object-cover"
-								/>
+								<img src={house.image} alt="House" class="h-20 w-20 rounded-[20px] object-cover" />
 
 								<div class="space-y-1 text-sm text-zinc-700">
 									<h3 class="font-semibold text-zinc-950">
@@ -288,9 +274,7 @@
 									</p>
 
 									{#if house.ownerId === auth.currentUser?.uid}
-										<p class="text-xs text-blue-600">
-											Your listing
-										</p>
+										<p class="text-xs text-blue-600">Your listing</p>
 									{/if}
 								</div>
 							</div>
@@ -299,9 +283,7 @@
 						<div
 							class="col-span-full rounded-2xl border border-white/40 bg-white/20 p-12 text-center backdrop-blur-lg"
 						>
-							<p class="text-sm text-zinc-700">
-								No houses listed yet.
-							</p>
+							<p class="text-sm text-zinc-700">No houses listed yet.</p>
 						</div>
 					{/each}
 				</div>
@@ -325,11 +307,7 @@
 				</button>
 
 				{#if selectedHouse}
-					<img
-						src={selectedHouse.image}
-						alt="House"
-						class="h-40 w-full rounded-2xl object-cover"
-					/>
+					<img src={selectedHouse.image} alt="House" class="h-40 w-full rounded-2xl object-cover" />
 
 					<h1 class="mt-5 text-2xl font-semibold text-zinc-950">
 						{selectedHouse.type}
@@ -355,19 +333,15 @@
 						</p>
 					{/if}
 				{:else}
-					<h1 class="text-2xl font-semibold text-zinc-950">
-						List a house
-					</h1>
+					<h1 class="text-2xl font-semibold text-zinc-950">List a house</h1>
 
 					<div class="mt-6 space-y-5">
 						<div>
-							<label class="mb-2 block text-sm font-medium text-zinc-800">
-								Type
-							</label>
+							<label class="mb-2 block text-sm font-medium text-zinc-800"> Type </label>
 
 							<select
 								bind:value={houseType}
-								class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 outline-none backdrop-blur-md focus:border-blue-500"
+								class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 backdrop-blur-md outline-none focus:border-blue-500"
 							>
 								<option value="Apartment">Apartment</option>
 								<option value="House">House</option>
@@ -376,23 +350,19 @@
 						</div>
 
 						<div>
-							<label class="mb-2 block text-sm font-medium text-zinc-800">
-								Location
-							</label>
+							<label class="mb-2 block text-sm font-medium text-zinc-800"> Location </label>
 
 							<input
 								type="text"
 								placeholder="Sector 46, Gurugram"
 								bind:value={location}
-								class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 placeholder:text-zinc-500 outline-none backdrop-blur-md focus:border-blue-500"
+								class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 backdrop-blur-md outline-none placeholder:text-zinc-500 focus:border-blue-500"
 							/>
 						</div>
 
 						<div class="flex gap-4">
 							<div class="flex-1">
-								<label class="mb-2 block text-sm font-medium text-zinc-800">
-									Bedrooms
-								</label>
+								<label class="mb-2 block text-sm font-medium text-zinc-800"> Bedrooms </label>
 
 								<input
 									type="number"
@@ -400,14 +370,12 @@
 									step="1"
 									placeholder="2"
 									bind:value={bedrooms}
-									class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 placeholder:text-zinc-500 outline-none backdrop-blur-md focus:border-blue-500"
+									class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 backdrop-blur-md outline-none placeholder:text-zinc-500 focus:border-blue-500"
 								/>
 							</div>
 
 							<div class="flex-1">
-								<label class="mb-2 block text-sm font-medium text-zinc-800">
-									Rent
-								</label>
+								<label class="mb-2 block text-sm font-medium text-zinc-800"> Rent </label>
 
 								<div class="flex items-center gap-2">
 									<span class="text-sm text-zinc-700">₹</span>
@@ -418,16 +386,14 @@
 										step="1"
 										placeholder="25000"
 										bind:value={rent}
-										class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 placeholder:text-zinc-500 outline-none backdrop-blur-md focus:border-blue-500"
+										class="w-full rounded-xl border border-white/40 bg-white/30 px-4 py-3 text-sm text-zinc-950 backdrop-blur-md outline-none placeholder:text-zinc-500 focus:border-blue-500"
 									/>
 								</div>
 							</div>
 						</div>
 
 						<div>
-							<label class="mb-2 block text-sm font-medium text-zinc-800">
-								House image
-							</label>
+							<label class="mb-2 block text-sm font-medium text-zinc-800"> House image </label>
 
 							<input
 								type="file"

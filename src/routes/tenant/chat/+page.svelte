@@ -14,7 +14,7 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
-	import DarkVeil from '$lib/components/DarkVeil.svelte';
+	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -146,15 +146,9 @@
 
 <div class="relative flex h-screen w-full overflow-hidden bg-black text-black">
 	<div class="fixed inset-0 z-0 h-full w-full">
-		<DarkVeil
-			hueShift={0}
-			noiseIntensity={0}
-			scanlineIntensity={0}
-			speed={0.5}
-			scanlineFrequency={0}
-			warpAmount={0}
-			resolutionScale={1}
-		/>
+		<div style="width: 100%; height: 100%; position: relative;">
+			<Grainient color1="#00b3a7" color2="#011ffe" color3="#fff700" />
+		</div>
 	</div>
 
 	<div
@@ -206,23 +200,19 @@
 			>
 				<h1 class="text-3xl font-bold text-zinc-950">Chat</h1>
 
-				<p class="mt-2 text-sm text-zinc-700">
-					Create a chat or join one using a code.
-				</p>
+				<p class="mt-2 text-sm text-zinc-700">Create a chat or join one using a code.</p>
 
 				<div
 					class="mt-8 rounded-2xl border border-white/40 bg-white/35 p-6 shadow-[0_6px_20px_rgba(0,0,0,0.12)] backdrop-blur-xl transition hover:bg-white/45"
 				>
-					<h2 class="mt-1 text-2xl font-bold text-zinc-950">
-						Join a chat
-					</h2>
+					<h2 class="mt-1 text-2xl font-bold text-zinc-950">Join a chat</h2>
 
 					<input
 						bind:value={joinCode}
 						maxlength="6"
 						inputmode="numeric"
 						placeholder="123456"
-						class="mt-6 w-full rounded-xl border border-white/40 bg-white/20 px-4 py-3 text-zinc-950 placeholder:text-zinc-500 outline-none backdrop-blur-lg focus:border-blue-500"
+						class="mt-6 w-full rounded-xl border border-white/40 bg-white/20 px-4 py-3 text-zinc-950 backdrop-blur-lg outline-none placeholder:text-zinc-500 focus:border-blue-500"
 					/>
 
 					<button
