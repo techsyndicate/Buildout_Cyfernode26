@@ -15,7 +15,6 @@
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let loading = $state(true);
 	let isOwner = $state(true);
@@ -173,13 +172,9 @@
 		goto('/');
 	}
 </script>
+<div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
+    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
 
-<div class="relative flex min-h-screen w-full overflow-hidden text-zinc-900">
-	<div class="fixed inset-0 z-0 h-full w-full">
-		<div class="relative h-full w-full">
-			<Grainient color1="#14ffd8" color2="#2cb72a" color3="#e2ff0a" />
-		</div>
-	</div>
 
 	<main class="relative z-10 flex-1 overflow-y-auto p-6 sm:p-10">
 		<div class="mx-auto max-w-3xl">

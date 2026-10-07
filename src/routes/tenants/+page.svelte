@@ -131,13 +131,8 @@
 		goto('/');
 	}
 </script>
-
-<div class="relative flex h-screen w-full overflow-hidden bg-black text-zinc-900">
-	<div class="fixed inset-0 z-0 h-full w-full">
-		<div style="width: 100%; height: 100%; position: relative;">
-			<Grainient color1="#09416c" color2="#b8b8b8" color3="#507750" />
-		</div>
-	</div>
+<div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
+    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
 
 	<div
 		class={`relative z-10 shrink-0 overflow-hidden transition-all duration-300 ${

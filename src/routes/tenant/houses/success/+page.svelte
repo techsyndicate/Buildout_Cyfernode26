@@ -30,18 +30,8 @@
 	});
 </script>
 
-<div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-black text-black">
-	<div class="fixed inset-0 z-0 h-full w-full">
-		<DarkVeil
-			hueShift={0}
-			noiseIntensity={0}
-			scanlineIntensity={0}
-			speed={0.5}
-			scanlineFrequency={0}
-			warpAmount={0}
-			resolutionScale={1}
-		/>
-	</div>
+<div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
+    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
 
 	<div
 		class="relative z-10 rounded-2xl border border-white/30 bg-white/20 px-12 py-10 text-center shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
