@@ -4,7 +4,6 @@
 	import { page } from '$app/state';
 	import { db } from '$lib/firebase';
 	import { deleteDoc, doc } from 'firebase/firestore';
-	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let deleting = $state(true);
 
@@ -30,32 +29,6 @@
 	});
 </script>
 
-<div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
-    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
-
-	<div
-		class="relative z-10 rounded-2xl border border-white/30 bg-white/20 px-12 py-10 text-center shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
-	>
-		<div
-			class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-white/35 backdrop-blur-lg"
-		>
-			{#if deleting}
-				<div class="h-6 w-6 animate-spin rounded-full border-2 border-zinc-400 border-t-black"></div>
-			{:else}
-				<span class="text-2xl text-green-600">✓</span>
-			{/if}
-		</div>
-
-		<h1 class="mt-5 text-2xl font-semibold text-zinc-950">
-			Payment successful.
-		</h1>
-
-		<p class="mt-2 text-sm text-zinc-700">
-			Your house has been removed successfully.
-		</p>
-
-		<p class="mt-4 text-xs text-zinc-600">
-			Redirecting you to your houses...
-		</p>
-	</div>
+<div class="flex min-h-screen items-center justify-center">
+	<h1 class="text-2xl font-semibold">Payment successful.</h1>
 </div>
