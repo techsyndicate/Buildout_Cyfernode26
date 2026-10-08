@@ -18,20 +18,16 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 
-	let loading = $state(true);
-
 	onMount(() => {
 		const houseId = page.url.searchParams.get('houseId');
 
 		if (!houseId) {
-			loading = false;
 			goto('/tenant/houses');
 			return;
 		}
 
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (!user) {
-				loading = false;
 				goto('/');
 				return;
 			}
@@ -91,8 +87,6 @@
 			} catch (err) {
 				console.error(err);
 			}
-
-			loading = false;
 
 			setTimeout(() => {
 				goto('/tenant/houses');
