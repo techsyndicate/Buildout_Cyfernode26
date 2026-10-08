@@ -2,60 +2,101 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { db } from '$lib/firebase';
-	import { deleteDoc, doc } from 'firebase/firestore';
-	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
+	import { auth, db } from '$lib/firebase';
+	import { onAuthStateChanged } from 'firebase/auth';
+	import {
+		deleteDoc,
+		doc,
+		getDoc,
+		getDocs,
+		collection,
+		query,
+		where,
+		updateDoc,
+		arrayUnion,
+		setDoc,
+		serverTimestamp
+	} from 'firebase/firestore';
 
-	let deleting = $state(true);
-
-	onMount(async () => {
+	onMount(() => {
 		const houseId = page.url.searchParams.get('houseId');
 
 		if (!houseId) {
-			deleting = false;
+			goto('/tenant/houses');
 			return;
 		}
 
-		try {
-			await deleteDoc(doc(db, 'houses', houseId));
-		} catch (err) {
-			console.error(err);
-		}
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
+			if (!user) {
+				goto('/');
+				return;
+			}
 
-		deleting = false;
+			try {
+				const houseRef = doc(db, 'houses', houseId);
+				const houseSnapshot = await getDoc(houseRef);
 
-		setTimeout(() => {
-			goto('/tenant/houses');
-		}, 1000);
+				if (houseSnapshot.exists()) {
+					const house = houseSnapshot.data();
+					const landlordId = house.ownerId;
+
+					if (landlordId) {
+						const spaceQuery = query(
+							collection(db, 'tenantSpaces'),
+							where('ownerId', '==', landlordId)
+						);
+
+						const spaceSnapshot = await getDocs(spaceQuery);
+
+						if (!spaceSnapshot.empty) {
+							const spaceDoc = spaceSnapshot.docs[0];
+							await updateDoc(doc(db, 'tenantSpaces', spaceDoc.id), {
+								members: arrayUnion(landlordId, user.uid)
+							});
+						} else {
+							await setDoc(doc(collection(db, 'tenantSpaces')), {
+								ownerId: landlordId,
+								members: [landlordId, user.uid],
+								createdAt: serverTimestamp()
+							});
+						}
+					}
+
+					const chatQuery = query(
+						collection(db, 'chatrooms'),
+						where('members', 'array-contains', landlordId || user.uid)
+					);
+
+					const chatSnapshot = await getDocs(chatQuery);
+
+					if (!chatSnapshot.empty) {
+						const chatDoc = chatSnapshot.docs[0];
+						await updateDoc(doc(db, 'chatrooms', chatDoc.id), {
+							members: arrayUnion(user.uid)
+						});
+					} else {
+						await setDoc(doc(collection(db, 'chatrooms')), {
+							code: Math.floor(100000 + Math.random() * 900000).toString(),
+							members: [landlordId, user.uid],
+							createdAt: serverTimestamp()
+						});
+					}
+				}
+
+				await deleteDoc(houseRef);
+			} catch (err) {
+				console.error(err);
+			}
+
+			setTimeout(() => {
+				goto('/tenant/houses');
+			}, 1000);
+		});
+
+		return () => unsubscribe();
 	});
 </script>
 
-<div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
-    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
-
-	<div
-		class="relative z-10 rounded-2xl border border-white/30 bg-white/20 px-12 py-10 text-center shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
-	>
-		<div
-			class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-white/35 backdrop-blur-lg"
-		>
-			{#if deleting}
-				<div class="h-6 w-6 animate-spin rounded-full border-2 border-zinc-400 border-t-black"></div>
-			{:else}
-				<span class="text-2xl text-green-600">✓</span>
-			{/if}
-		</div>
-
-		<h1 class="mt-5 text-2xl font-semibold text-zinc-950">
-			Payment successful.
-		</h1>
-
-		<p class="mt-2 text-sm text-zinc-700">
-			Your house has been removed successfully.
-		</p>
-
-		<p class="mt-4 text-xs text-zinc-600">
-			Redirecting you to your houses...
-		</p>
-	</div>
+<div class="flex min-h-screen items-center justify-center">
+	<h1 class="text-2xl font-semibold">Payment successful. Redirecting...</h1>
 </div>

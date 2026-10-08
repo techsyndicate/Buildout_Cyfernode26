@@ -228,7 +228,7 @@
 									<span class="font-medium text-zinc-950">Tenant Space</span>
 
 									<p class="mt-1 text-xs text-zinc-600">
-										Code: {tenant.code}
+										ID: {tenant.id}
 									</p>
 								</div>
 
