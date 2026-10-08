@@ -3,6 +3,7 @@
     import { auth } from '$lib/firebase';
     import { onAuthStateChanged, signOut } from 'firebase/auth';
     import { goto } from '$app/navigation';
+    import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
     let name = $state('');
     let sidebarOpen = $state(true);
@@ -44,8 +45,12 @@
     }
 </script>
 
-<div class="relative flex h-screen w-full overflow-hidden bg-[#f2ecce] text-black">
-    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
+<div class="relative flex h-screen w-full overflow-hidden bg-neutral-200 text-black">
+    <div class="fixed inset-0 z-0 h-full w-full">
+        <div style="width: 100%; height: 100%; position: relative;">
+            <Grainient color1="#e5e5e5" color2="#d4d4d4" color3="#f5f5f5" />
+        </div>
+    </div>
 
     <div class={`relative z-10 shrink-0 overflow-hidden transition-all duration-300 ${sidebarOpen ? 'w-55' : 'w-0'}`}>
         <div class="m-3 flex h-[calc(100vh-1.5rem)] flex-col rounded-2xl border border-black/10 bg-neutral-100/80 p-2 shadow-md backdrop-blur-xl">
