@@ -147,7 +147,7 @@
 
 									<p>{house.location}</p>
 
-									<p>{house.bedrooms} bedrooms</p>
+									<p>{house.bedrooms} {house.bedrooms === 1 ? 'bedroom' : 'bedrooms'}</p>
 
 									<p class="text-zinc-900">
 										₹{house.rent}/month

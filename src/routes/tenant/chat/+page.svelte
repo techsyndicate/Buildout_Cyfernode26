@@ -143,8 +143,9 @@
 		goto('/');
 	}
 </script>
+
 <div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
-    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
+	<div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
 	<div
 		class={`relative z-10 shrink-0 overflow-hidden transition-all duration-300 ${
 			sidebarOpen ? 'w-55' : 'w-0'
@@ -247,7 +248,7 @@
 										<p class="font-semibold text-zinc-950">Chat</p>
 
 										<p class="mt-1 text-sm text-zinc-600">
-											Code: {chat.code}
+											ID: {tenant.id}
 										</p>
 									</div>
 
