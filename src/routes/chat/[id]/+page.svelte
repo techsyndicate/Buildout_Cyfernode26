@@ -97,7 +97,7 @@
 
 	{#if loading}
 		<div class="relative z-10 flex h-screen w-full items-center justify-center">
-			<p class="text-sm font-light text-white/80">Loading chat...</p>
+			<p class="text-sm font-light text-black/80">Loading chat...</p>
 		</div>
 	{:else if allowed}
 		<div class="relative z-10 flex h-screen w-full flex-col backdrop-blur-md">
@@ -106,21 +106,21 @@
 			>
 				<button
 					onclick={() => goto('/chat')}
-					class="rounded-xl border border-white/30 bg-white/20 px-3.5 py-2 text-sm text-white transition-all duration-200 hover:bg-white/30"
+					class="rounded-xl border border-white/30 bg-white/20 px-3.5 py-2 text-sm text-black transition-all duration-200 hover:bg-white/30"
 				>
 					&larr;
 				</button>
 
 				<div>
-					<h1 class="font-semibold text-white">Chat Room</h1>
-					<p class="text-xs font-light text-white/70">ID: {chatId}</p>
+					<h1 class="font-semibold text-black">Chat Room</h1>
+					<p class="text-xs font-light text-black/70">ID: {chatId}</p>
 				</div>
 			</header>
 
 			<main class="flex-1 overflow-y-auto p-6">
 				<div class="mx-auto flex max-w-3xl flex-col gap-3.5">
 					{#if messages.length === 0}
-						<p class="mt-4 text-center text-sm font-light text-white/70">
+						<p class="mt-4 text-center text-sm font-light text-black/70">
 							No messages yet. Say something.
 						</p>
 					{/if}
@@ -130,8 +130,8 @@
 							<div
 								class={`max-w-[70%] rounded-2xl px-4 py-3 text-sm shadow-lg backdrop-blur-md transition-all ${
 									message.sender === userId
-										? 'border border-white/40 bg-white/35 font-medium text-white'
-										: 'border border-white/20 bg-white/20 text-white'
+										? 'border border-white/40 bg-white/35 font-medium text-black'
+										: 'border border-white/20 bg-white/20 text-black'
 								}`}
 							>
 								<p class="leading-relaxed">{message.text}</p>
@@ -152,7 +152,7 @@
 					<input
 						bind:value={text}
 						placeholder="Type a message..."
-						class="min-w-0 flex-1 rounded-2xl border border-white/30 bg-white/20 px-4 py-3 text-sm text-white placeholder-white/60 backdrop-blur-md transition-all outline-none focus:border-white/60 focus:bg-white/30"
+						class="min-w-0 flex-1 rounded-2xl border border-white/30 bg-white/20 px-4 py-3 text-sm text-black placeholder-white/60 backdrop-blur-md transition-all outline-none focus:border-white/60 focus:bg-white/30"
 					/>
 				</div>
 			</form>

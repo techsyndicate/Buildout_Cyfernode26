@@ -172,15 +172,15 @@
 		goto('/');
 	}
 </script>
-<div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
-    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
 
+<div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
+	<div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
 
 	<main class="relative z-10 flex-1 overflow-y-auto p-6 sm:p-10">
 		<div class="mx-auto max-w-3xl">
 			<button
 				onclick={() => goto(isOwner ? '/tenants' : '/tenant/landlords')}
-				class="rounded-xl border border-white/30 bg-white/20 px-3 py-2 text-sm font-medium text-white backdrop-blur-xl transition hover:bg-white/30"
+				class="rounded-xl border border-white/30 bg-white/20 px-3 py-2 text-sm font-medium text-black backdrop-blur-xl transition hover:bg-white/30"
 			>
 				← Back
 			</button>
@@ -225,7 +225,7 @@
 					<button
 						onclick={saveRules}
 						disabled={savingRules}
-						class="mt-3 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:opacity-50"
+						class="mt-3 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-black shadow-sm transition hover:bg-zinc-800 disabled:opacity-50"
 					>
 						{savingRules ? 'Saving...' : 'Save Rules'}
 					</button>
@@ -260,7 +260,7 @@
 					<button
 						onclick={submitComplaint}
 						disabled={submitting}
-						class="mt-4 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:opacity-50"
+						class="mt-4 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-black shadow-sm transition hover:bg-zinc-800 disabled:opacity-50"
 					>
 						{submitting ? 'Sending...' : 'Submit Request'}
 					</button>
@@ -328,7 +328,7 @@
 
 												<button
 													onclick={() => sendReply(complaint.id)}
-													class="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800"
+													class="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-black transition hover:bg-zinc-800"
 												>
 													Reply
 												</button>
