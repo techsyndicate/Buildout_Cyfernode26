@@ -245,10 +245,6 @@
 								>
 									<div>
 										<p class="font-semibold text-zinc-950">Chat</p>
-
-										<p class="mt-1 text-sm text-zinc-600">
-											ID: {tenant.id}
-										</p>
 									</div>
 
 									<span class="text-zinc-600">→</span>

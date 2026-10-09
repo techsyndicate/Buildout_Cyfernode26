@@ -223,10 +223,6 @@
 							>
 								<div>
 									<span class="font-medium text-zinc-950">Tenant Space</span>
-
-									<p class="mt-1 text-xs text-zinc-600">
-										ID: {tenant.id}
-									</p>
 								</div>
 
 								<span class="text-zinc-600">→</span>
