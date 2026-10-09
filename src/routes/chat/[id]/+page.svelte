@@ -14,7 +14,6 @@
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let messages = $state<any[]>([]);
 	let text = $state('');
@@ -91,8 +90,10 @@
 		goto('/');
 	}
 </script>
+
 <div class="relative flex min-h-screen w-full overflow-hidden bg-[#f2ecce] text-zinc-900">
-    <div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>>
+	<div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
+	>
 
 	{#if loading}
 		<div class="relative z-10 flex h-screen w-full items-center justify-center">

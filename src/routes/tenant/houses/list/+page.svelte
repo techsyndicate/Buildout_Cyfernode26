@@ -5,7 +5,6 @@
 	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { doc, getDoc } from 'firebase/firestore';
-	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let sidebarOpen = $state(true);
 	let house = $state<any>(null);
@@ -129,9 +128,7 @@
 </script>
 
 <div class="relative min-h-screen w-full text-black">
-	<div class="fixed inset-0 z-0 h-full w-full">
-		<Grainient color1="#40981b" color2="#f53100" color3="#0091ff" />
-	</div>
+	<div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]"></div>
 
 	<div class="relative z-10 flex min-h-screen">
 		<div

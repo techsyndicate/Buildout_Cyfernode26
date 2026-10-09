@@ -14,7 +14,6 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
-	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let loading = $state(true);
 	let tenantSpaces = $state<any[]>([]);
@@ -122,10 +121,8 @@
 </script>
 
 <div class="relative flex h-screen w-full overflow-hidden bg-black text-black">
-	<div class="fixed inset-0 z-0 h-full w-full">
-		<div style="width: 100%; height: 100%; position: relative;">
-			<Grainient color1="#00b3a7" color2="#011ffe" color3="#fff700" />
-		</div>
+	<div class="fixed inset-0 z-0 h-full w-full bg-[#f2ecce]">
+		<div style="width: 100%; height: 100%; position: relative;"></div>
 	</div>
 
 	<div

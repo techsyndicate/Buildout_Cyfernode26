@@ -4,7 +4,6 @@
 	import { onAuthStateChanged, signOut } from 'firebase/auth';
 	import { goto } from '$app/navigation';
 	import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
@@ -67,9 +66,7 @@
 
 <div class="relative flex h-screen w-full overflow-hidden text-black">
 	<div class="fixed inset-0 z-0 h-full w-full">
-		<div class="relative h-full w-full">
-			<Grainient color1="#40981b" color2="#f53100" color3="#0091ff" />
-		</div>
+		<div class="relative h-full w-full bg-[#f2ecce]"></div>
 	</div>
 
 	<div

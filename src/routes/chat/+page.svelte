@@ -14,7 +14,6 @@
 		serverTimestamp
 	} from 'firebase/firestore';
 	import { goto } from '$app/navigation';
-	import Grainient from '$lib/components/svelte-bits/Grainient.svelte';
 
 	let name = $state('');
 	let sidebarOpen = $state(true);
